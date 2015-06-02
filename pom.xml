@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>driver-analysis</module>
+        <module>feature-extraction</module>
         <module>common</module>
     </modules>
     <packaging>pom</packaging>
@@ -45,6 +46,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>driver-analysis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>feature-extraction</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
