@@ -91,7 +91,7 @@ object PointCount {
       outputPath = args(1)
       true
     } else {
-      System.out.println("Executing AXA PointCount.")
+      System.out.println("Failed executing PointCount.")
       System.out.println("  Provide parameters to read input data from a file.")
       System.out.println("  Usage: PointCounter <input path> <result path>")
       false
