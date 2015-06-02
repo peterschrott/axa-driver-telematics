@@ -6,41 +6,172 @@
 
     <groupId>com.peedeex21.axa</groupId>
     <artifactId>axa-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
-
-    <name>axa-drivers-telematics</name>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>driver-analysis</module>
+        <module>common</module>
+    </modules>
     <packaging>pom</packaging>
 
-    <scm>
-        <url>https://github.com/apache/flink</url>
-        <connection>git@github.com:apache/flink.git</connection>
-        <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/flink.git</developerConnection>
-    </scm>
-
-    <modules>
-        <module>feature-extraction</module>
-    </modules>
+    <name>AXA Driver Telematics</name>
+    <description>AXA Driver Telematics</description>
+    <url>https://github.com/peedeeX21/axa-driver-telematics</url>
 
     <properties>
+        <encoding>UTF-8</encoding>
+        <!-- Maven Plugins -->
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <scala-maven-plugin.version>3.2.0</scala-maven-plugin.version>
+        <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
+        <commons-io.version>2.4</commons-io.version>
+        <!-- Java -->
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Flink -->
+        <flink.version>0.9-SNAPSHOT</flink.version>
+        <!-- Testing -->
+        <junit.version>4.11</junit.version>
+        <!-- Other dependencies -->
+        <argparse4j.version>0.4.3</argparse4j.version>
+        <reflections.version>0.9.9-RC1</reflections.version>
+        <jackson.version>2.5.3</jackson.version>
     </properties>
 
-    <!--  These two requirements are the minimum to use and develop Flink. -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- AXA-3 -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>driver-analysis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-scala</artifactId>
-            <version>0.8.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-scala</artifactId>
-            <version>0.8.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients</artifactId>
-            <version>0.8.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arguments parsing -->
+        <dependency>
+            <groupId>net.sourceforge.argparse4j</groupId>
+            <artifactId>argparse4j</artifactId>
+            <version>${argparse4j.version}</version>
+        </dependency>
+
+        <!-- Dynamic loading -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${reflections.version}</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <name>Apache Development Snapshot Repository</name>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Java Compiler -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <!-- Scala compiler -->
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${scala-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>scala-compile-first</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>scala-test-compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <recompileMode>incremental</recompileMode>
+                        <useZincServer>true</useZincServer>
+                        <jvmArgs>
+                            <jvmArg>-Xms128m</jvmArg>
+                            <jvmArg>-Xmx512m</jvmArg>
+                            <javacArg>-Xlint:unchecked</javacArg>
+                            <javacArg>-Xlint:deprecation</javacArg>
+                        </jvmArgs>
+                        <args>
+                            <arg>-deprecation</arg>
+                            <arg>-feature</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
 </project>

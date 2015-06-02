@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>axa-parent</artifactId>
+        <groupId>com.peedeex21.axa</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>common</artifactId>
+    <name>AXA Driver Telematics (Common)</name>
+
+    <properties>
+        <!-- Scala -->
+        <scala.version>2.10.4</scala.version>
+        <scala.tools.version>2.10</scala.tools.version>
+    </properties>
+
+    <dependencies>
+        <!-- Plotting -->
+        <dependency>
+            <groupId>com.quantifind</groupId>
+            <artifactId>wisp_${scala.tools.version}</artifactId>
+            <version>0.0.4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Java Code formatting -->
+            <plugin>
+                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+                <artifactId>maven-java-formatter-plugin</artifactId>
+            </plugin>
+            <!-- Scala compiler -->
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
