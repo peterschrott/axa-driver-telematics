@@ -1,6 +1,5 @@
 package com.peedeex21.axa
 
-import org.apache.flink.api.common.functions.RichMapFunction
 import org.apache.flink.api.scala._
 
 object FeatureExtractor {
@@ -9,32 +8,20 @@ object FeatureExtractor {
       return
     }
 
-
     // set up the execution environment
     val env = ExecutionEnvironment.getExecutionEnvironment
 
     // get input data
     val data: DataSet[(Double, Double)] = env.readCsvFile(inputPath)
 
-    val distance = data.map(x => {
-
-      });
+    //TODO extract some nice features :)
 
     // emit result
-    distance.print()
+    data.print()
 
     // execute programdist
-    env.execute("Axa Demo")
+    env.execute("AXA FeatureExtractor")
   }
-
-  final class FileToRowMapper extends RichMapFunction[(Double, Double), (Double, Double, String)] {
-
-    def map(row: (Double, Double)): (Double, Double, String) = {
-      (1,1,"")
-    }
-
-  }
-
 
   private def parseParameters(args: Array[String]): Boolean = {
     if (args.length == 2) {
@@ -42,9 +29,9 @@ object FeatureExtractor {
       outputPath = args(1)
       true
     } else {
-      System.out.println("Executing AxaDemo.")
+      System.out.println("Failed executing FeatureExtractor.")
       System.out.println("  Provide parameters to read input data from a file.")
-      System.out.println("  Usage: AxaDemo <input path> <result path>")
+      System.out.println("  Usage: FeatureExtractor <input path> <result path>")
       false
     }
   }
