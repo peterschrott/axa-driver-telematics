@@ -15,8 +15,6 @@ object PointCount {
 
   case class XYAggEntry(coordinates: XYEntry, count: Int) {}
 
-  case class XYCountEntry(x: Double, y: Double, count: Int) {}
-
 
   def main(args: Array[String]) {
 
@@ -31,20 +29,9 @@ object PointCount {
     readParam.setBoolean("recursive.file.enumeration", true)
 
     // get input data
-    val input = env.readCsvFile[(String, String)](inputPath)
+    val input: DataSet[(String, String)] = env.readCsvFile(inputPath, ignoreFirstLine = true)
 
-    val drive = input // input type is DataSet[Strings]
-      .filter(line => {
-          (line._1 match {
-            case coordinatePattern() => true
-            case _ => false
-          }) &&
-          (line._2 match {
-            case coordinatePattern() => true
-            case _ => false
-          })
-        }
-      ) // filter non double tuple lines: DataSet[(String,String)]
+    val drive = input // input type is DataSet[(Strings, String)]
       .map(entry => (
         entry._1.toDouble,
         entry._2.toDouble
@@ -53,10 +40,10 @@ object PointCount {
     plotting.plotXYScatter(drive.collect())
 
     val counts = drive
-      .map(entry => XYEntry(
-        x = entry._1,
-        y = entry._2
-      )) // transform list to DataSet[XYEntry]
+      .map(d => XYEntry(
+        x = d._1,
+        y = d._2
+      ))
       .map(entry => XYAggEntry(
         coordinates = entry,
         count = 1
@@ -69,14 +56,9 @@ object PointCount {
         count = a.count + b.count /* aggregate partial result */
       )) // DataSet[XYAggEntry]
       .filter(agg => {
-        agg.count > 1 /* only two or more occurrences */
-      }) // filtered DataSet[XYAggEntry]
-      .map(entry => XYCountEntry(
-        x = entry.coordinates.x,
-        y = entry.coordinates.y,
-        count = entry.count
-      )) // DataSet[XYResultEntry]
-      .map(entry => (entry.x, entry.y))
+        agg.count >= 2 /* only two or more occurrences */
+      }) // DataSet[XYAggEntry]
+      .map(entry => (entry.coordinates.x, entry.coordinates.y)) // DataSet[(Double, Double)]
 
     // emit as CSV File
     //counts.writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
