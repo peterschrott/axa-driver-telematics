@@ -3,10 +3,27 @@ package com.peedeex21.axa.model
 /**
  * Created by Peer Schrott on 08.06.15.
  */
-class Vector2D(val x: Double, val y: Double) {
+class Vector2D() {
+
+  /** x coordinate of vector */
+  var x = 0.0: Double
+  /** y coordinate of vector */
+  var y = 0.0: Double
 
   /**
-   * Calculates the euclidean distance between this and other vector.
+   * Private constructor for Vector2D. Use companion object for initialisation a Vector2D.
+   *
+   * @param x x coordinate of Vector2D
+   * @param y y coordinate of Vector2D
+   */
+  private def this(x: Double, y: Double) {
+    this()
+    this.x = x
+    this.y = y
+  }
+
+  /**
+   * Calculates the euclidean distance between this and other given vector.
    *
    * @param other vector to calculate distance to
    * @return euclidean distance to other
@@ -22,7 +39,7 @@ class Vector2D(val x: Double, val y: Double) {
    * @return result of addition
    */
   def add(other: Vector2D) = {
-    new Vector2D(this.x + other.x, this.y + other.y)
+    Vector2D(this.x + other.x, this.y + other.y)
   }
 
   /**
@@ -32,7 +49,7 @@ class Vector2D(val x: Double, val y: Double) {
    * @return result of subtraction
    */
   def subtract(other: Vector2D) = {
-    new Vector2D(this.x - other.x, this.y - other.y)
+    Vector2D(this.x - other.x, this.y - other.y)
   }
 
   /**
@@ -52,6 +69,21 @@ class Vector2D(val x: Double, val y: Double) {
    */
   def l2Norm() = {
     math.sqrt(math.pow(this.x, 2) + math.pow(this.y, 2))
+  }
+
+  override def toString: String = {
+    return "(" + x + "/" + y + ")"
+  }
+}
+
+
+/**
+ * Companion object for class [[Vector2D]].
+ */
+object Vector2D {
+
+  def apply(x: Double, y: Double) = {
+    new Vector2D(x, y)
   }
 
 }

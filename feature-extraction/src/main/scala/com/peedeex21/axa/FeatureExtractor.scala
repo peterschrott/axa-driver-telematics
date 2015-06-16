@@ -1,87 +1,130 @@
 package com.peedeex21.axa
 
-import com.peedeex21.axa.model.AxaInputFormat
+import com.peedeex21.axa.model.{Drive, DriveLog}
 import org.apache.flink.api.scala._
-import org.apache.flink.core.fs.FileSystem
 
-object FeatureExtractor {
-
-  private var inputPath: String = null
-  private var outputPath: String = null
+/**
+ * Created by peter on 15.06.15.
+ */
+class FeatureExtractor(env: ExecutionEnvironment) {
 
   /**
+   * extract some nice features for each drive :)
    *
-   * @param args start parameter
+   * level 1 features: features, describing a single drive only
+   * level 2 features: features, describing drives in correlation of their sibling drives
    */
-  def main(args: Array[String]) {
-    if (!parseParameters(args)) {
-      return
-    }
+  def extract(driveDS: DataSet[Drive]): (DataSet[Drive], DataSet[DriveLog]) = {
+    /* level 1 features */
+    val featureL1DS = driveDS.map(drive => {
+      drive.extractLevelOneFeatures()
+      drive
+    })
 
-    // set up the execution environment
-    val env = ExecutionEnvironment.getExecutionEnvironment
-    env.setParallelism(1)
+    /* level 2 features */
+    val meansByDriverDrive =
+      featureL1DS.map(entry => {
+        (entry.driverId, entry.driveId, entry.rowCount, entry.speedMean, entry.accelerationMean)
+      })
+      .groupBy(agg => (agg._1, agg._2))
+      .reduce((agg1, agg2) => (agg1._1, agg1._2, agg1._3, (agg1._4 + agg2._4), (agg1._5 + agg2._5)))
+      //.map(agg => (agg._1, agg._2, agg._4 / agg._3, agg._5 / agg._3))
 
-    // get input data
-    val input = env.readFile(new AxaInputFormat(), inputPath)
-
-    /*
-     * extract some nice features :)
-     */
-    val plusFeatures = input.map(_.extractAllFeatures())
+    val featureL2DS = featureL1DS.join(meansByDriverDrive)
+      .where(d => (d.driverId, d.driveId)).equalTo(agg => (agg._1, agg._2))
+      .map(product => {
+        product._1.setSpeedMeanDriver(product._2._3/product._1.rowCount)
+        product._1.setAccelerationMeanDriver(product._2._3/product._1.rowCount)
+        product._1
+      })
 
     // join the features with the original data set of x and
     // as join key the driver id, drive id and sequence number is used
-    val points = plusFeatures
+    var driveLogDS = featureL2DS
       .flatMap(entry => {
-        entry.points.map(p => {
-          (entry.driveId, entry.driverId, p._1, p._2.x, p._2.y)
+        entry.coordinates.map(a => {
+          DriveLog(entry.driveId, entry.driverId, a._1, a._2.x, a._2.y)
         })
       })
 
-    val distances = plusFeatures
+    val distanceDS = featureL2DS
       .flatMap(entry => {
         entry.distances.map(a => {
           (entry.driveId, entry.driverId, a._1, a._2)
         })
       })
 
-    val angles = plusFeatures
+    val distanceTotalDS = featureL2DS
+      .flatMap(entry => {
+        entry.distanceTotal.map(a => {
+          (entry.driveId, entry.driverId, a._1, a._2)
+        })
+      })
+
+    val speedDS = featureL2DS
+      .flatMap(entry => {
+        entry.speeds.map(a => {
+          (entry.driveId, entry.driverId, a._1, a._2)
+        })
+      })
+
+    val accelerationDS = featureL2DS
+      .flatMap(entry => {
+        entry.accelerations.map(a => {
+          (entry.driveId, entry.driverId, a._1, a._2)
+        })
+      })
+
+    val angleDS = featureL2DS
       .flatMap(entry => {
         entry.angles.map(a => {
           (entry.driveId, entry.driverId, a._1, a._2)
         })
       })
 
-    val out = points
-      .join(distances).where(0, 1, 2).equalTo(0, 1, 2)
-        .map(join => (join._1._1, join._1._2, join._1._3, join._1._4, join._1._5, join._2._4))
-      .join(angles).where(0, 1, 2).equalTo(0, 1, 2)
-        .map(join => (join._1._1, join._1._2, join._1._3, join._1._4, join._1._5, join._1._6, join._2._4))
+    driveLogDS = driveLogDS.join(distanceDS).where(dl => (dl.driverId, dl.driveId, dl.seqNo)).equalTo(0, 1, 2)
+      {(dl, r) => dl.distance = r._4; dl}
 
-    // emit result to CSV file
-    out.writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
+    driveLogDS = driveLogDS.join(distanceTotalDS).where(dl => (dl.driverId, dl.driveId, dl.seqNo)).equalTo(0, 1, 2)
+      {(dl, r) => dl.distanceTotal = r._4; dl}
 
-    // execute program distributed
-    env.execute("AXA FeatureExtractor")
-  }
+    driveLogDS = driveLogDS.join(speedDS).where(dl => (dl.driverId, dl.driveId, dl.seqNo)).equalTo(0, 1, 2)
+      {(dl, r) => dl.speed = r._4; dl}
 
-  /**
-   *
-   * @param args start parameter
-   * @return true if parsing of arguments was successful, otherwise false
-   */
-  private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length == 2) {
-      inputPath = args(0)
-      outputPath = args(1)
-      true
-    } else {
-      System.out.println("Failed executing FeatureExtractor.")
-      System.out.println("  Provide parameters to read input data from a file.")
-      System.out.println("  Usage: FeatureExtractor <input path> <result path>")
-      false
-    }
+    driveLogDS = driveLogDS.join(accelerationDS).where(dl => (dl.driverId, dl.driveId, dl.seqNo)).equalTo(0, 1, 2)
+      {(dl, r) => dl.acceleration = r._4; dl}
+
+    driveLogDS = driveLogDS.join(angleDS).where(dl => (dl.driverId, dl.driveId, dl.seqNo)).equalTo(0, 1, 2)
+      {(dl, r) => dl.angle = r._4; dl}
+
+    /* join the features with the original data set of x and
+       as join key the driver id, drive id and sequence number is used
+    val driveLogDS = enrichedDS.flatMap(drive => {
+      val coordinateDS = env.fromCollection(drive.coordinates.toList)
+      val distanceDS = env.fromCollection(drive.distances.toList)
+      val distancesTotalDS = env.fromCollection(drive.distanceTotal.toList)
+      val speedDs = env.fromCollection(drive.speeds.toList)
+      val accelerationDS = env.fromCollection(drive.accelerations.toList)
+      val angleDS = env.fromCollection(drive.angles.toList)
+
+      val join = coordinateDS.map(c => {
+        DriveLog(drive.driverId, drive.driveId, c._1, c._2.x, c._2.y)
+      })
+        .join(distanceDS)
+        .where(_.seqNo).equalTo(0) {(dl, r) => dl.distance = r._2; dl}
+        .join(distancesTotalDS)
+        .where(_.seqNo).equalTo(0) {(dl, r) => dl.distanceTotal = r._2; dl}
+        .join(speedDs)
+        .where(_.seqNo).equalTo(0) {(dl, r) => dl.speed = r._2; dl}
+        .join(accelerationDS)
+        .where(_.seqNo).equalTo(0) {(dl, r) => dl.acceleration = r._2; dl}
+        .join(angleDS)
+        .where(_.seqNo).equalTo(0) {(dl, r) => dl.angle = r._2; dl}
+
+      join.collect()
+    })*/
+
+    (featureL2DS, driveLogDS)
   }
 
 }
