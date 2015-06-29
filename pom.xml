@@ -28,10 +28,10 @@
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <commons-io.version>2.4</commons-io.version>
         <!-- Java -->
-        <java.version>1.8</java.version>
+        <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Flink -->
-        <flink.version>0.9-SNAPSHOT</flink.version>
+        <flink.version>0.9.0</flink.version>
         <!-- Testing -->
         <junit.version>4.11</junit.version>
         <!-- Other dependencies -->
@@ -63,19 +63,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
         <!-- Testing -->
         <dependency>
@@ -83,19 +73,6 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Arguments parsing -->
-        <dependency>
-            <groupId>net.sourceforge.argparse4j</groupId>
-            <artifactId>argparse4j</artifactId>
-            <version>${argparse4j.version}</version>
         </dependency>
 
         <!-- Dynamic loading -->
@@ -179,5 +156,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>

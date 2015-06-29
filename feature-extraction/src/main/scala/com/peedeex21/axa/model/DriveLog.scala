@@ -1,9 +1,10 @@
 package com.peedeex21.axa.model
 
 /**
- * Created by Peter Schrott on 15.06.15.
+ * Created by Peter Schrott
  */
-class DriveLog() {
+@SerialVersionUID(1L)
+class DriveLog extends Serializable{
 
   var driverId: Int = 0
   var driveId: Int = 0
@@ -16,7 +17,7 @@ class DriveLog() {
   var acceleration: Double = 0.0
   var angle: Double = 0.0
 
-  private def this(driverId: Int, driveId: Int, seqNo: Int, x: Double, y: Double) = {
+  def this(driverId: Int, driveId: Int, seqNo: Int, x: Double, y: Double) = {
     this()
     this.driverId = driverId
     this.driveId = driveId
@@ -25,16 +26,23 @@ class DriveLog() {
     this.y = y
   }
 
+  def this(driverId: Int, driveId: Int, seqNo: Int, x: Double, y: Double, distance: Double,
+                    distanceTotal: Double, speed: Double, acceleration: Double, angle: Double) = {
+    this()
+    this.driverId = driverId
+    this.driveId = driveId
+    this.seqNo = seqNo
+    this.x = x
+    this.y = y
+    this.distance = distance
+    this.distanceTotal = distanceTotal
+    this.speed = speed
+    this.acceleration = acceleration
+    this.angle = angle
+  }
+
   override def toString: String = {
     driverId + "," + driveId + "," + x + "," + y  + "," + distance + "," + distanceTotal + "," +
       speed  + ","  +acceleration  + "," + angle
   }
-}
-
-object DriveLog {
-
-  def apply(driverId: Int, driveId: Int, seqNo: Int, x: Double, y: Double): DriveLog = {
-    new DriveLog(driverId, driveId, seqNo, x, y)
-  }
-
 }

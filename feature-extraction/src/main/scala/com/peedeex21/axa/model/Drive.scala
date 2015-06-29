@@ -5,7 +5,8 @@ import scala.collection.mutable.HashMap
 /**
  * Created by Peter Schrott on 04.06.15.
  */
-class Drive() {
+@SerialVersionUID(1L)
+class Drive() extends Serializable{
 
   var driverId = -1: Int
   var driveId = -1: Int
@@ -229,7 +230,7 @@ class Drive() {
    * @return
    */
   override def toString: String = {
-    return driverId + "," + driveId  + "," + rowCount  + "," + duration  + "," + distance  + "," +
+    return driverId + "," + driveId  + "," + duration  + "," + distance  + "," +
       speedMin   + "," + speedMax   + "," + speedMean + "," +
       speedMeanDriver + "," + speedSDDriver  + "," +
       accelerationMin  + "," + accelerationMax   + "," +  accelerationMean + "," +
@@ -254,6 +255,13 @@ class Drive() {
   def setSpeedMeanDriver(speedMeanDriver: Double): Unit = {
     this.speedMeanDriver = speedMeanDriver
     this.speedSDDriver = this.speedMean - this.speedMeanDriver
+  }
+
+  def transformToDriveMeta(): DriveMeta = {
+    return new DriveMeta(driverId, driveId, duration, distance, speedMin, speedMax, speedMean,
+      speedMeanDriver, speedSDDriver, accelerationMin, accelerationMax, accelerationMean,
+      accelerationMeanDriver, accelerationSDDriver, angleMean, stopCounterTotal, stops3Sec,
+      stops10Sec, stops120Sec)
   }
 
 }
