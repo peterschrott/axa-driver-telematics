@@ -11,18 +11,6 @@ class Vector2D() {
   var y = 0.0: Double
 
   /**
-   * Private constructor for Vector2D. Use companion object for initialisation a Vector2D.
-   *
-   * @param x x coordinate of Vector2D
-   * @param y y coordinate of Vector2D
-   */
-  private def this(x: Double, y: Double) {
-    this()
-    this.x = x
-    this.y = y
-  }
-
-  /**
    * Calculates the euclidean distance between this and other given vector.
    *
    * @param other vector to calculate distance to
@@ -73,6 +61,18 @@ class Vector2D() {
 
   override def toString: String = {
     return "(" + x + "/" + y + ")"
+  }
+
+  /**
+   * Private constructor for Vector2D. Use companion object for initialisation a Vector2D.
+   *
+   * @param x x coordinate of Vector2D
+   * @param y y coordinate of Vector2D
+   */
+  private def this(x: Double, y: Double) {
+    this()
+    this.x = x
+    this.y = y
   }
 }
 

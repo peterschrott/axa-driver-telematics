@@ -4,7 +4,7 @@ package com.peedeex21.axa.model
  * Created by Peter Schrott
  */
 @SerialVersionUID(1L)
-class DriveLog extends Serializable{
+class DriveLog extends Serializable {
 
   var driverId: Int = 0
   var driveId: Int = 0
@@ -27,7 +27,7 @@ class DriveLog extends Serializable{
   }
 
   def this(driverId: Int, driveId: Int, seqNo: Int, x: Double, y: Double, distance: Double,
-                    distanceTotal: Double, speed: Double, acceleration: Double, angle: Double) = {
+           distanceTotal: Double, speed: Double, acceleration: Double, angle: Double) = {
     this()
     this.driverId = driverId
     this.driveId = driveId
@@ -42,7 +42,7 @@ class DriveLog extends Serializable{
   }
 
   override def toString: String = {
-    driverId + "," + driveId + "," + x + "," + y  + "," + distance + "," + distanceTotal + "," +
-      speed  + ","  +acceleration  + "," + angle
+    driverId + "," + driveId + "," + seqNo + "," + x + "," + y + "," + distance + "," +
+      distanceTotal + "," + speed + "," + acceleration + "," + angle
   }
 }

@@ -10,20 +10,20 @@ import java.io.StringWriter;
 
 /**
  * !!! FOR NOW THIS DOES NOT WORK IN PARALLEL EXECUTION !!
- *
+ * <p>
  * This is a simple input format for the data set of the Kaggle competition AXA Driver Telematics.
- *
+ * <p>
  * The structure of the data set:
- *
+ * <p>
  * folder1 (driver)
- *       +-----file1 (drive)
- *                 +-----column x
- *                 +-----column y
- *
+ * +-----file1 (drive)
+ * +-----column x
+ * +-----column y
+ * <p>
  * There is a folder for each driver (1 - 2736). For each driver there are the logged drives in
  * CSV format (1 - 200). Each drive log contains the anonymized x- / y- coordinates of the drive,
  * sampled every second.
- *
+ * <p>
  * Created by Peter Schrott on 05.06.15.
  */
 public class AxaInputFormat extends FileInputFormat<Drive> {
@@ -51,8 +51,8 @@ public class AxaInputFormat extends FileInputFormat<Drive> {
     String content = readFileContent();
     /* extract the information regarding folder structure */
     String[] pathArray = super.currentSplit.getPath().toString().split("/");
-    int driverId = Integer.parseInt(pathArray[pathArray.length-2]);
-    int driveId = Integer.parseInt(pathArray[pathArray.length-1].split("\\.")[0]);
+    int driverId = Integer.parseInt(pathArray[pathArray.length - 2]);
+    int driveId = Integer.parseInt(pathArray[pathArray.length - 1].split("\\.")[0]);
     /* return the POJO Drive */
     return new Drive(driverId, driveId, content);
   }
@@ -63,7 +63,7 @@ public class AxaInputFormat extends FileInputFormat<Drive> {
     return end_prev;
   }
 
-  private String readFileContent() throws IOException{
+  private String readFileContent() throws IOException {
     StringWriter writer = new StringWriter();
     IOUtils.copy(super.stream, writer, "UTF-8");
     return writer.toString();
