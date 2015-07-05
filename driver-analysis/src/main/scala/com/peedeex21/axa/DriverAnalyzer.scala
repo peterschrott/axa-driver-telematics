@@ -37,7 +37,7 @@ object DriverAnalyzer {
       /* get raw input data */
       val axaDS = env.readFile(new AxaInputFormat(), inputPath).setParallelism(1)
       /* extract some nice features for each drive :) */
-      val extractor = new FeatureExtractor(env)
+      val extractor = new FeatureExtractor()
       val withFeatures = extractor.extract(axaDS)
       driveMetaDS = Some(withFeatures._1)
       driveLogDS = Some(withFeatures._2)
@@ -59,10 +59,10 @@ object DriverAnalyzer {
       .map(d => (d, rand.nextDouble()))
 
     val labeledDrThis_Train = drivesThis.filter(entry => entry._2 <= 0.85)
-      .map(entry => new LabeledVector(1.0, entry._1.getFeatureVector()))
+      .map(entry => new LabeledVector(1.0, entry._1.toFeatureVector))
 
     val labeledDrThis_Test = drivesThis.filter(entry => entry._2 > 0.85)
-      .map(entry => new LabeledVector(1.0, entry._1.getFeatureVector()))
+      .map(entry => new LabeledVector(1.0, entry._1.toFeatureVector))
 
     val drivesOthers = driveMetaDS.get.filter(_.driverId != 1)
       .map(d => (d, rand.nextDouble()))
@@ -70,11 +70,11 @@ object DriverAnalyzer {
 
     val labeledDrOthers_Train = drivesOthers
       .first(170)
-      .map(entry => new LabeledVector(0.0, entry._1.getFeatureVector()))
+      .map(entry => new LabeledVector(0.0, entry._1.toFeatureVector))
 
     val labeledDrOthers_Test = drivesOthers
       .first(30)
-      .map(entry => new LabeledVector(0.0, entry._1.getFeatureVector()))
+      .map(entry => new LabeledVector(0.0, entry._1.toFeatureVector))
 
     val svmDS_Train = labeledDrThis_Train.union(labeledDrOthers_Train)
     val svmDS_Test = labeledDrThis_Test.union(labeledDrOthers_Test)

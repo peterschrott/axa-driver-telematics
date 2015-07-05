@@ -27,7 +27,7 @@ object FeatureExtractorRunner {
     /*
      * extract some nice features for each drive :)
      */
-    val extractor = new FeatureExtractor(env)
+    val extractor = new FeatureExtractor()
     val enrichedDS = extractor.extract(axaDS)
 
     /* emit the meta info */

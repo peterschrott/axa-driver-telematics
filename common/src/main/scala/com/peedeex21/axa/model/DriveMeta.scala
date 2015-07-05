@@ -1,13 +1,15 @@
 package com.peedeex21.axa.model
 
+import org.apache.flink.ml.math.DenseVector
+
 /**
  * Created by Peter Schrott
  */
 @SerialVersionUID(1L)
-class DriveMeta extends Serializable {
+class DriveMeta extends Product with Serializable {
 
-  var driverId = 0
-  var driveId = 0
+  var driverId = 0.0
+  var driveId = 0.0
 
   var duration = 0.0
   var distance = 0.0
@@ -111,5 +113,46 @@ class DriveMeta extends Serializable {
       turns160P + "," + turns160N + "," + turnsBiggerMean + "," + turnsU + "," +
       stopDriveRatio + "," + stops1Sec + "," + stops3Sec + "," + stops10Sec + "," + stops120Sec
   }
+
+  override def productElement(n: Int) = n match {
+    case 0 => driverId
+    case 1 => driveId
+    case 2 => duration
+    case 3 => distance
+    case 4 => speedMax
+    case 5 => speedMedian
+    case 6 => speedMean
+    case 7 => speedMeanDeviation
+    case 8 => speedSd
+    case 9 => speedMeanDriver
+    case 10 => speedSdDriver
+    case 11 => accMax
+    case 12 => accMedian
+    case 13 => accMean
+    case 14 => accMeanDeviation
+    case 15 => accSd
+    case 16 => accMeanDriver
+    case 17 => accSdDriver
+    case 18 => angleMedian
+    case 19 => angleMean
+    case 20 => turns35P
+    case 21 => turns35N
+    case 22 => turns70P
+    case 23 => turns70N
+    case 24 => turns160P
+    case 25 => turns160N
+    case 26 => turnsBiggerMean
+    case 27 => turnsU
+    case 28 => stopDriveRatio
+    case 29 => stops1Sec
+    case 30 => stops3Sec
+    case 31 => stops10Sec
+    case 32 => stops120Sec
+    case  _ => throw new IndexOutOfBoundsException(n.toString)
+  }
+
+  override def productArity: Int = 33
+
+  override def canEqual(that: Any): Boolean = that.isInstanceOf[DriveMeta]
 
 }

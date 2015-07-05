@@ -11,6 +11,7 @@
         <module>driver-analysis</module>
         <module>feature-extraction</module>
         <module>common</module>
+        <module>outlier-detection</module>
     </modules>
     <packaging>pom</packaging>
 
