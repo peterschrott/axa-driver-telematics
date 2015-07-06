@@ -97,9 +97,10 @@ class DriveMeta extends Product with Serializable {
   }
 
   def toFeatureVector: DenseVector = {
-    DenseVector(Array(duration, distance, speedMin, speedMax, speedMean, speedMeanDriver,
-      speedSdDriver, accMin, accMax, accMean, accMeanDriver,
-      accSdDriver, angleMean, stopDriveRatio, stops3Sec, stops10Sec, stops120Sec))
+    DenseVector(Array(duration, distance, speedMax, speedMedian, speedMean, speedMeanDeviation,
+      speedSd, speedMeanDriver, speedSdDriver, accMax, accMedian, accMean, accMeanDeviation,
+      accSd, accMeanDriver, accSdDriver, angleMedian, angleMean, turns35P, turns35N, turns70P,
+      turns70N, turns160P, turns160N, turnsBiggerMean, turnsU, stopDriveRatio, stops1Sec, stops3Sec, stops10Sec, stops120Sec))
   }
 
   override def toString: String = {
@@ -154,5 +155,16 @@ class DriveMeta extends Product with Serializable {
   override def productArity: Int = 33
 
   override def canEqual(that: Any): Boolean = that.isInstanceOf[DriveMeta]
+
+}
+
+object DriveMeta {
+
+  val pojoFields = Array("driverId", "driveId", "duration", "distance", "speedMax",
+    "speedMedian", "speedMean", "speedMeanDeviation", "speedSd", "speedMeanDriver",
+    "speedSdDriver", "accMax", "accMedian", "accMean", "accMeanDeviation", "accSd",
+    "accMeanDriver", "accSdDriver", "angleMedian", "angleMean", "turns35P", "turns35N",
+    "turns70P", "turns70N", "turns160P", "turns160N", "turnsBiggerMean", "turnsU",
+    "stopDriveRatio", "stops1Sec", "stops3Sec", "stops10Sec", "stops120Sec")
 
 }
