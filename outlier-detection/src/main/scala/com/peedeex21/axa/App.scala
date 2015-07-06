@@ -96,7 +96,7 @@ object OutlierDetection extends SparkContextSupport {
   private def parseParameters(args: Array[String]): Boolean = {
     if (args.length == 1) {
       inputPath = args(0)
-      targetFiles = "1" //inputPath.substring(inputPath.lastIndexOf("/") + 1)
+      targetFiles = "1.csv.gz" //inputPath.substring(inputPath.lastIndexOf("/") + 1)
       true
     } else {
       System.out.println("Failed executing OutlierDetection.")

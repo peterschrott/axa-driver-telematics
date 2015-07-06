@@ -1,6 +1,5 @@
 package com.peedeex21.axa
 
-import com.peedeex21.plotting
 import org.apache.flink.api.scala._
 import org.apache.flink.configuration.Configuration
 
@@ -37,7 +36,7 @@ object PointCount {
         entry._2.toDouble
       )) // transform list to DataSet[(Double, Double)]
 
-    plotting.plotXYScatter(drive.collect())
+    //plotting.plotXYScatter(drive.collect())
 
     val counts = drive
       .map(d => XYEntry(
@@ -62,7 +61,7 @@ object PointCount {
 
     // emit as CSV File
     //counts.writeAsCsv(outputPath, writeMode = FileSystem.WriteMode.OVERWRITE)
-    plotting.plotXYScatter(counts.collect())
+    //plotting.plotXYScatter(counts.collect())
     // execute program
     //env.execute("AXA PointCount")
   }
