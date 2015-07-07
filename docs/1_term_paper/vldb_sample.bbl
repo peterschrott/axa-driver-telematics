@@ -1,0 +1,13 @@
+\begin{thebibliography}{1}
+
+\bibitem{book:mapr}
+E.~F. Ted~Dunning.
+\newblock {\em Practical Machine Learning: A New Look At Anomaly Detection}.
+\newblock O'Reilly, 2014.
+
+\bibitem{survey:anomaly-detection}
+V.~K. Varun~Chandola, Arindam~Banerjee.
+\newblock Anomaly detection : A survey.
+\newblock {\em ACM Computing Surveys}, September 2009.
+
+\end{thebibliography}

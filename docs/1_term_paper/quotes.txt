@@ -1,0 +1,22 @@
+The exact notion of an anomaly is different for different application domains. For example, in the medical domain a small deviation from normal (e.g., fluctuations in body temperature) might be an anomaly, while similar deviation in the stock market domain (e.g., fluctuations in the value of a stock) might be considered as normal. Thus applying a technique developed in one domain to another is not straightforward.
+- Anomaly Detection : A Survey (page 3)
+
+2.3.3 Unsupervised anomaly detection. Techniques that operate in unsupervised mode do not require training data, and thus are most widely applicable. The techniques in this category make the implicit assumption that normal instances are far more frequent than anomalies in the test data. If this assumption is not true then such techniques suffer from high false alarm rate.
+Many semi-supervised techniques can be adapted to operate in an unsupervised mode by using a sample of the unlabeled data set as training data. Such adaptation assumes that the test data contains very few anomalies and the model learnt during training is robust to these few anomalies.
+- Anomaly Detection : A Survey (page 11)
+
+
+Scores. Scoring techniques assign an anomaly score to each instance in the test data depending on the degree to which that instance is considered an anomaly. Thus the output of such techniques is a ranked list of anomalies. An analyst may choose to either analyze top few anomalies or use a cut-off threshold to select the anomalies.
+- Anomaly Detection : A Survey (page 11)
+
+
+When are anomaly-detection methods a good choice? Unlike fictional
+detective stories, in anomaly detection, you may not have a clear sus‐
+pect to search for, and you may not even know what the “crime” is. In
+fact, one way to think about when to turn to anomaly detection is this:
+Anomaly detection is about finding what you don’t know to look for.
+You are searching for anomalies, but you don’t know what their char‐
+acteristics will be. If you did, you could use a different form of machine
+learning, called classification, or you would just write specific rules to
+find the anomalies. But that’s not generally where you start.
+- Practical Machine Learning Anomaly Detection
