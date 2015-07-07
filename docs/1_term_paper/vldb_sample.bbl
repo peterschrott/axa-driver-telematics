@@ -1,5 +1,10 @@
 \begin{thebibliography}{1}
 
+\bibitem{rep:u-montreal}
+Y.~Bengio.
+\newblock Learning deep architectures for ai.
+\newblock Technical report, University of Montreal, 2009.
+
 \bibitem{book:mapr}
 E.~F. Ted~Dunning.
 \newblock {\em Practical Machine Learning: A New Look At Anomaly Detection}.

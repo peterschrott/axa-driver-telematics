@@ -3,44 +3,44 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: vldb_sample.aux
 The style file: abbrv.bst
 Database file #1: vldb_sample.bib
-You've used 2 entries,
+You've used 3 entries,
             2118 wiz_defined-function locations,
-            507 strings with 3949 characters,
-and the built_in function-call counts, 441 in all, are:
-= -- 39
-> -- 14
+            511 strings with 4032 characters,
+and the built_in function-call counts, 637 in all, are:
+= -- 60
+> -- 21
 < -- 0
-+ -- 6
-- -- 4
-* -- 20
-:= -- 86
-add.period$ -- 6
-call.type$ -- 2
-change.case$ -- 7
++ -- 9
+- -- 6
+* -- 27
+:= -- 126
+add.period$ -- 9
+call.type$ -- 3
+change.case$ -- 12
 chr.to.int$ -- 0
-cite$ -- 2
-duplicate$ -- 22
-empty$ -- 40
-format.name$ -- 4
-if$ -- 88
+cite$ -- 3
+duplicate$ -- 30
+empty$ -- 55
+format.name$ -- 6
+if$ -- 127
 int.to.chr$ -- 0
-int.to.str$ -- 2
+int.to.str$ -- 3
 missing$ -- 3
-newline$ -- 13
-num.names$ -- 4
-pop$ -- 12
+newline$ -- 18
+num.names$ -- 6
+pop$ -- 15
 preamble$ -- 1
-purify$ -- 6
+purify$ -- 9
 quote$ -- 0
-skip$ -- 13
+skip$ -- 18
 stack$ -- 0
-substring$ -- 10
+substring$ -- 15
 swap$ -- 2
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 6
+type$ -- 10
 warning$ -- 0
-while$ -- 4
-width$ -- 3
-write$ -- 22
+while$ -- 6
+width$ -- 4
+write$ -- 33

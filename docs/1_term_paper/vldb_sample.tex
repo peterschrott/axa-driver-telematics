@@ -69,32 +69,35 @@ Julian Voelkel\\
 %8. References
 
 \section{Introduction}
+\label{sec:Introduction}
 \textit{Anomaly detection} (commonly referred to as \textit{outlier detection}) is one of a few very common tasks in the field of Machine Learning. The goal of algorithms designed for the purpose of anomaly detection, are concerned with finding data in a dataset that does not conform to a pattern. That means, the goal is to identify data points, that are special in regards to their behavior, compared to the data points in the dataset, that are considered "normal". \cite{survey:anomaly-detection} These data points are called outliers, because they show different behavior than one would expect. Figure \ref{fig:outlier-basic} shows a basic plot containing data points, with two different populations, along with two outliers, that do not seem to fit either pattern.\\
 \begin{figure}
 \centering
 \includegraphics[scale=0.5]{"pics/outlier_basic"}%width=\textwidth
-\caption{ADD SOME DESCRIPTIVE CAPTION HERE... }
+\caption{In this rather simple example, we can see two outliers represented by red crosses and two populations within one dataset... }
 \label{fig:outlier-basic}
 \end{figure}
 The value of identifying outliers in a dataset lies in the action one can take after detecting them. Two common applications of anomaly detection algorithms are health care and fraud detection. In the former, those algorithms can for instance help identifying sick patients, by identifying anomalous vital signs compared in a group of similar patients. In the latter application, those algorithms can account for fast, actionable information in case of credit card fraud, which can be identified by anomalous purchases, given the owners purchase pattern in form of historical purchases. \\
-Anomaly detection can happen in a supervised, semi-supervised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection.
+Anomaly detection can happen in a supervised, semi-supervised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection and the challenges we face in its context.
 %Difference to binary classification? -> Only data of one class given
 %simple plot
 %\subsection{Supervised Learning}
 \subsection{Challenges of Unsupervised Anomaly Detection}
+\label{subsec:Intro-challenges}
 One difficulty that arises in unsupervised anomaly detection is, since we do not have any labels for training data, we do not even know what we are looking for. That is, we do not know what a "normal" data point would like, let alone what an anomalous point would look like. To put it in Ted Dunning and Ellen Friedman's words: "Anomaly detection is about finding what you don't know to look for." \cite{book:mapr} 
 Since there is no labeled training data in the most widely applicable case of unsupervised anomaly detection, the approach of finding outliers is a different one compared to training a model and then predicting to which class an unseen data point belongs to (much like binary classification). Instead, in case of unsupervised anomaly detection, we generally assume that the number of "normal" data points exceeds the number of anomalous data points by far.\cite{survey:anomaly-detection}. This assumption is fundamental to unsupervised outlier detection, since we would not be able to learn what is normal otherwise. Not being able to determine what "normal" is, means there is no way of finding what is anomalous. Since the goal of anomaly detection is finding what is anomalous, unsupervised anomaly detection usually starts with figuring out what "normal" is. After achieving this (which, oftentimes, is much harder than it sounds), we can determine the deviation of a data point to what is "normal" using some similarity measure. There are, however, different algorithms dealing with the problem of unsupervised anomaly detection for different fields and problem domains. The main reason why there is no single approach applicable to each problem is, that there are tremendous differences in what is considered normal and what is considered anomalous, depending on the application domain we are looking at. Considering an example for this circumstance given in \cite{survey:anomaly-detection}, one can easily imagine why that is the case: "The exact notion of an anomaly is different for different application domains. For example, in the medical domain a small deviation from normal (e.g., fluctuations in body temperature) might be an anomaly, while similar deviation in the stock market domain (e.g., fluctuations in the value of a stock) might be considered as normal. Thus applying a technique developed in one domain to another is not straightforward."\\
-%TODO common techniques/algorithms used in unsupervised anomaly detection
+Common techniques and algorithms used to perform unsupervised anomaly detection include clustering based methods, statistical techniques, information theoretic methods as well as spectral techniques. Note, however, that the choice of algorithm can depend heavily on the problem's domain.
+
 
 \subsection{Deep Learning Auto-Encoder}
-
+\label{subsec:Intro-deep}
+An auto-encoder, autoassociator or Diablo network is a specific type of artificial neural network. The goal of a deep learning auto-encoder is to learn a compressed encoding of a dataset. Due to that purpose, the auto-encoder consists of one input layer, one or more hidden layers and an output layer with equally as many neurons (i.e. features) as the input layer.  In order to achieve the goal of representing a dataset in a compressed manner, the auto-encoder is given the original dataset as input, while the target output is the input itself. \cite{rep:u-montreal} The loss function is some type of dissimilarity function (typically a squared error function) between the input and the output of the auto-encoder. This way, the auto-encoder is trained to learn a nonlinear, compressed representation of the original dataset. This, of course, makes the auto-encoder a useful tool for dimensionality reduction (much like PCA). Which is also the main application area of this algorithm. In our case, though, we want to use the deep learning auto-encoder in order to perform unsupervised anomaly detection.
 
 ?
-
 \section{Problem Statement} \label{problem_statement}
 %with Target and Scope
 %The \textit{proceedings} are the records of a conference.
-Anomaly detection refers to the task of identifying observations, that do not match the pattern of the data. Oftentimes anomaly detection happens in an unsupervised context. That is, the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. In this project, we shall analyze the performance of a particular algorithm in the field of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a Deep Learning Auto-Encoder\footnote{An artificial neural network used for efficient codings.} 
+As already mentioned in \textbf{\ref{sec:Introduction}. \nameref{sec:Introduction}}, anomaly detection refers to the task of identifying observations, that do not match the general pattern of the data set they arise in. Oftentimes anomaly detection happens in an unsupervised context, which means that the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. Within the scope of this project, we analyze the performance of a particular algorithm more commonly used in a field different to the one of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a Deep Learning Auto-Encoder (see \ref{subsec:Intro-deep} \nameref{subsec:Intro-deep})
 well suited for anomaly detection in an unlabeled dataset?}
 \subsection{Target}\label{target}
 As stated above, target of this project is to evaluate the quality of a Deep Learning Auto-Encoder model for the task of identifying anomalies in an unsupervised context. 
@@ -110,6 +113,18 @@ These steps can be outlined as follows:
 
 %\section{Problem Statement}
 \section{Methodology}
+Within the scope of this project, we use \textit{H2O.ai}'s (see \ref{subsec:Metho-h2o} \nameref{subsec:Metho-h2o}) implementation of the Deep Learning Auto-Encoder model through its Scala API on top of Apache spark. The dataset we use in order to be able to compare our results to those of our peers using different algorithms is the \textit{AXA Driver Telematics Analysis} dataset (see \ref{}), which contains multiple vehicle traces by multiple drivers. The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
+Since this dataset does not contain labels for the data, uploading our results to Kaggle, allows us to obtain a performance evaluation and being able to compare our results to other people's results, yielded from other algorithms. 
+%(How are we trying to answer the question)
+% Apply implementation of said algorithm on dataset that has been worked on by x-thousand people
+% description dataset
+\subsection{H2O.ai}
+\label{subsec:Metho-h2o}
+\subsection{The AXA Driver Telematics Analysis Dataset}
+\label{subsec:Method-the}
+\subsection{Feature Extraction}
+\label{subsec:Metho-feature}
+
 \section{Experiments}
 \section{Results}
 \section{Conclusion}
@@ -129,7 +144,6 @@ In order to being able reach our goal specified in \textbf{\ref{problem_statemen
 
 In this project, we use \textit{H2O.ai}'s\footnote{An open source parallel processing engine for machine learning} implementation of the Deep Learning Auto-Encoder model through its Scala API on top of Apache spark. The dataset we use in order to being able to compare our results to those of our peers is the \textit{AXA Driver Telematics Analysis} dataset\footnote{This dataset was released to the public as a competition on \url{https://www.kaggle.com/}. It can be found here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data?drivers.zip}}, which contains multiple vehicle traces by multiple drivers. The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
 Since this dataset does not contain labels for the data, uploading our results to Kaggle, allows us to obtain a performance evaluation and being able to compare our results to other people's results, yielded from other algorithms. 
-%\cite{bowman:reasoning}
 	
 
 
