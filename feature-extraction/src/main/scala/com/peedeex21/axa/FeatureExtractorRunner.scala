@@ -27,13 +27,15 @@ object FeatureExtractorRunner {
     /*
      * extract some nice features for each drive :)
      */
-    val extractor = new FeatureExtractor(env)
-    val enrichedDS = extractor.extract(axaDS)
+    val extractor = new FeatureExtractor()
+    val enrichedDSs = extractor.extract(axaDS)
 
     /* emit the meta info */
-    enrichedDS._1.writeAsText(outputPath + "/drive-meta/", writeMode = FileSystem.WriteMode.OVERWRITE)
+    enrichedDSs._1.writeAsText(outputPath + "/drive-meta/",
+      writeMode = FileSystem.WriteMode.OVERWRITE)
     /* emit the enriched x- / y-coordinates */
-    enrichedDS._2.writeAsText(outputPath + "/drive-logs/", writeMode = FileSystem.WriteMode.OVERWRITE)
+    enrichedDSs._2.writeAsText(outputPath + "/drive-logs/",
+      writeMode = FileSystem.WriteMode.OVERWRITE)
 
     /* execute program distributed */
     env.execute("AXA FeatureExtractor")
