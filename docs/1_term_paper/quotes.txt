@@ -20,3 +20,13 @@ acteristics will be. If you did, you could use a different form of machine
 learning, called classification, or you would just write specific rules to
 find the anomalies. But that’s not generally where you start.
 - Practical Machine Learning Anomaly Detection
+
+
+If there is one linear hidden layer and the mean squared error criterion is used to train the network, then the k hidden units learn to project the input in the span of the first k principal components of the data.
+- Yoshua Bengio: Learning Deep Architectures for AI 
+
+If the hidden layer is non-linear, the autoassociator behaves very differently from PCA, with the ability to capture multi-modal aspects of the input distribution.
+- Yoshua Bengio: Learning Deep Architectures for AI
+
+To achieve perfect reconstruction of continuous inputs, a one- hidden layer autoassociator with non-linear hidden units needs very small weights in the first layer (to bring the non-linearity of the hidden units in their linear regime) and very large weights in the second layer. With binary inputs, very large and very small weights are also needed to completely minimize the reconstruction error
+- Yoshua Bengio: Learning Deep Architectures for AI
