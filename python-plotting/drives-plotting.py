@@ -37,4 +37,4 @@ def plot_drives(path_to_data= '../../data/drivers',driverId=1, outliers=False):
     plt.show()
 
 # plott all drives of driver 1, labeling 1, 69 and 183 as outliers
-plot_drives(outliers=[1,69,183])
+plot_drives(driverId=16, outliers=[1,69,183])

@@ -109,8 +109,8 @@ Common techniques and algorithms used to perform unsupervised anomaly detection 
 
 \subsection{Deep Learning Auto-Encoder}
 \label{subsec:Intro-deep}
-An auto-encoder, autoassociator or Diablo network is a specific type of artificial neural network. The goal of a deep learning auto-encoder is to learn a compressed encoding of a dataset. Due to that purpose, the auto-encoder consists of one input layer, one or more hidden layers and an output layer with equally as many neurons (i.e. features) as the input layer.  In order to achieve the goal of representing a dataset in a compressed manner, the auto-encoder is given the original dataset as input, while the target output is the input itself. \cite{rep:u-montreal} The loss function is some type of dissimilarity function (typically a squared error function) between the input and the output of the auto-encoder. This way, the auto-encoder is trained to learn a nonlinear (or linear), compressed representation of the original dataset. This, of course, makes the auto-encoder a useful tool for dimensionality reduction. For the special case of only one linear hidden layer with $k$ neurons where the mean squared error criterion is used to train the auto-encoder, then the hidden layer consisting of the $k$ neurons learn to represent the dataset in the dimension of its first $k$ principal components. \cite{rep:u-montreal} This is much like Principal Component Analysis (PCA). If, however, the hidden layer is of nonlinear nature, then the auto-encoder behaves very different compared to PCA. \cite{article:nonlinear-autoassociator}.
-The main application of the deep learning auto-encoder is dimensionality reduction. In our case, though, we want to use the deep learning auto-encoder in order to perform unsupervised anomaly detection. \\
+An auto-encoder, autoassociator or Diablo network is a specific type of artificial neural network. The goal of a deep learning auto-encoder is to learn a compressed encoding of a dataset. Due to that purpose, the auto-encoder consists of one input layer, one or more hidden layers and an output layer with equally as many neurons (i.e. features) as the input layer.  In order to achieve the goal of representing a dataset in a compressed manner, the auto-encoder is given the original dataset as input, while the target output is the input itself. \cite{rep:u-montreal} The loss function is some type of dissimilarity function (typically a squared error function) between the input and the output of the auto-encoder. This way, the auto-encoder is forced to learn a nonlinear (or linear), compressed representation of the original dataset. This, of course, makes the auto-encoder a useful tool for dimensionality reduction. For the special case where there is only one linear hidden layer with $k$ neurons and the mean squared error criterion is used to train the auto-encoder, the hidden layer consisting of the $k$ neurons learns to represent the dataset in the dimension of its first $k$ principal components. \cite{rep:u-montreal} This is much like Principal Component Analysis (PCA). If, however, the hidden layer is of nonlinear nature, then the auto-encoder behaves very different compared to PCA. \cite{article:nonlinear-autoassociator}.
+Due to its ability to learn a compressed version of the dataset, the main application of the deep learning auto-encoder is obviously dimensionality reduction. In our case, though, we want to use the deep learning auto-encoder in order to perform unsupervised anomaly detection. \\
 A schematic diagram of an auto-encoder taken from \cite{article:astronomy} is given in Figure \ref{fig:auto-encoder}. 
 \begin{figure}
 \centering
@@ -144,12 +144,42 @@ Within the scope of this project, we use \textit{H2O.ai}'s (see section \ref{sub
 %(How are we trying to answer the question)
 % Apply implementation of said algorithm on dataset that has been worked on by x-thousand people
 % description dataset
-\subsection{H2O.ai}
+\subsection{H2O.ai  and H2O Deep Learning}
 \label{subsec:Metho-h2o}
-H2O by H2O.ai is an open source software project primarily used for fast scalable machine learning. The software offers a predictive analytics platform, combining high performance parallel processing in combination with an extensive machine learning library. \cite{website:h2o}\\
-In the context of scalable machine learning with H2O.ai, Sparkling Water is a....
-%TODO Write some more stuff about H2O/Sparkling Water
-\subsection{The AXA Driver Telematics Analysis Dataset}
+H2O by H2O.ai is an open source software project primarily used for fast scalable machine learning. The software offers a predictive analytics platform, combining high performance parallel processing with an extensive machine learning library. \cite{website:h2o} H2O was built on top of Apache Hadoop as well as Apache Spark. As of February 2015, the software has more than 12,000 users and is deployed more than 2,000 companies, including PayPal, Nielsen and Cisco. \cite{booklet:deep-learning}\\
+Besides Distributed Random Forests, K-means, Generalized Linear Model and Gradient Boosting Machine, H2O also offers readily available Deep Learning algorithms, which includes the auto-encoder. \\
+As already mentioned in Section \ref{subsec:Intro-deep}, the deep learning auto-encoder is an algorithm that is used primarily for dimensionality reduction. The way we want the auto-encoder to detect outliers in an unsupervised manner is shown in figure \ref{fig:auto-encoder-reconstruction}. As shown in the figure, the algorithm is forced to learn the identity through a nonlinear, reduced representation of original data. This is done by first reducing the data's dimensionality and then reconstructing it from that reduced representation. Since one assumption in unsupervised anomaly detection is that the number of normal data points exceeds the number of anomalous ones by far (see Section \ref{subsec:Intro-challenges}), that learned model will be influenced more by what is normal in the data than by what is anomalous. Thus, attempting to reconstruct a data point from its reduced representation will have a greater error than anomalous data points that it will have for normal data points.
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=\linewidth]{"pics/reconstruction"}
+%\caption{Schematic overview of anomaly detection using a deep learning auto-encoder}
+%\label{fig:outlier-reconstruction}
+%\end{figure}
+
+\begin{figure}
+\begin{subfigure}{.5 \textwidth}
+	\centering
+	\includegraphics[width=\linewidth]{"pics/outlier_basic"}
+	\caption{Given dataset}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{"pics/reduced-rep"}
+  \caption{...is reduced in dimensionality...}
+  \label{fig:reduced}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{"pics/reconstruction"}
+  \caption{...and reconstructed, in order to find outliers}
+  \label{fig:reconstruction}
+\end{subfigure}
+\caption{Identifying outliers by reconstruction error}
+\label{fig:auto-encoder-reconstruction}
+\end{figure}
+
+\subsection{The AXA Driver Telematics Analysis \\Dataset}
 \label{subsec:Metho-dataset}
 The AXA Driver Telematics dataset is a dataset that was being released to the public in form of a Kaggle challenge 
 \footnote{Find the challenge with the dataset here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}}
@@ -166,7 +196,7 @@ x & y & DriverID \\
 53.7 & -32.6 & 1 \\
 . & . & . \\
 . & . & . \\
-. & . & . \\
+. & . & . \\	
 \end{tabular}
 \caption{The first few rows of the driver one's first drive}
 \label{table:raw-trace}
@@ -183,8 +213,9 @@ Figure \ref{fig:axa-trip} (taken from \href{https://www.kaggle.com/c/axa-driver-
 \label{fig:axa-trip}
 \end{figure}
 
- The size of the AXA Driver Telematics Analysis Dataset is 1.44 GB compressed and 5.92 GB in extracted state.
- 
+With a size of 1.44 GB compressed and 5.92 GB in extracted state, this dataset can be considered reasonably large and thus, processing the dataset on a parallel system is justified. \\
+The fact, that AXA, a major car insurance provider (amongst other things), releases a dataset of this kind with the goal of identifying anomalies in driving patterns to the public, hints at a real world application for anomaly detection algorithms that generates value of some kind. In this case, the companies goal might have been to identify or count the times a person not insured for a particular car still drove said car. Identifying those instances might for instance allow challenging of fraudulent insurance claims. Another way AXA might profit from identifying anomalies in drives is, that having an estimate of the numbers of uninsured drives allows for adjustment of internal calculations of revenue, deductions and the like, as well as adjustment of insurance rates. If not one of the above, there has to be some kind of incentive for AXA to be able to identify anomalies. \\
+In our case, however, the fact that more than 1,500 teams already submitted their solutions, allows for some benchmarking of the deep learning auto-encoder.
 
 \subsection{Feature Extraction}
 \label{subsec:Metho-feature}
@@ -252,7 +283,7 @@ Figure \ref{}
 
 \begin{figure*}
 \centering
-\includegraphics[width=1.2\linewidth]{"pics/duration-vs-distance-driver"}
+\includegraphics[width=\linewidth]{"pics/duration-vs-distance-driver"}
 \caption{Plot of duration versus distance for each drive by each driver. }
 \label{fig:duration-vs-distance}
 \end{figure*}
@@ -289,6 +320,8 @@ Figure \ref{}
 
 \section{Experiments}
 \label{sec:Experiments}
+In order to be able to obtain indications as to whether the deep learning auto-encoder is suitable for anomaly detection, we have to somehow evaluate its findings. Since our dataset is of unlabeled nature, we do not have any labels. As stated in Section \ref{subsec:the} though, the dataset was the subject of a Kaggle.com challenge. Hence, our prediction of outliers will automatically be graded after uploading it to the site, which will in turn give us the accuracy of our prediction.\\
+Figure \ref{insert figure label} outlines the scope of our first experiment, that aims at getting indications as to whether a deep-learning auto-encoder is suitable for anomaly detection.
 \section{Results}
 \label{sec:Results}
 \section{Conclusion}
