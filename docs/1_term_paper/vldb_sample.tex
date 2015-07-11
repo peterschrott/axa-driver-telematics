@@ -1,0 +1,341 @@
+% THIS IS AN EXAMPLE DOCUMENT FOR VLDB 2012
+
+\documentclass{vldb}
+\usepackage{graphicx}
+\usepackage{balance}  % for  \balance command ON LAST PAGE  (only there!)
+\usepackage{fixltx2e}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{lipsum}
+\begin{document}
+
+% ****************** TITLE ****************************************
+
+%\title{A Sample {\ttlit Proceedings of the VLDB Endowment} Paper in LaTeX
+%Format\titlenote{for use with vldb.cls}}
+\title{Unsupervised Anomaly Detection using \ttlit{H2O.ai}}
+
+
+% possible, but not really needed or used for PVLDB:
+%\subtitle{[Extended Abstract]
+%\titlenote{A full version of this paper is available as\textit{Author's Guide to Preparing ACM SIG Proceedings Using \LaTeX$2_\epsilon$\ and BibTeX} at \texttt{www.acm.org/eaddress.htm}}}
+
+% ****************** AUTHORS **************************************
+
+\numberofauthors{2} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+
+\author{
+% 1st. author
+\alignauthor
+Peter Schrott\\
+       \affaddr{Berlin Institute of Technology}\\
+       \email{peter.schrott@campus.tu-berlin.de}
+% 2nd. author
+\alignauthor
+Julian Voelkel\\
+       \affaddr{Berlin Institute of Technology}\\
+       \email{voelkel@campus.tu-berlin.de}  
+}
+\date{15 July 2015}
+
+\maketitle
+
+%\pagebreak
+
+%\begin{abstract}
+%The abstract for your paper for the PVLDB Journal submission.
+%The template and the example document are based on the ACM SIG Proceedings  templates. This file is part of a package for preparing the submissions for review. These files are in the camera-ready format, but they do not contain the full copyright note.
+%Note that after the notification of acceptance, there will be an updated style file for the camera-ready submission containing the copyright note.
+%\end{abstract}
+
+%Term Report Structure
+%1 . Cover Page: Title, Authors, Author Email Adresses, Course Title, Date
+%2. Introduction
+	%Anomaly Detection
+	% Deeplearning Auto Encoder
+%3. Problem Statement
+	% Discover if Deep Learning Auto-Encoder is well suited for anomaly detection on an unlabeled dataset
+%4. Methodology
+	%(How are we trying to answer the question)
+	% Apply implementation of said algorithm on dataset that has been worked on by x-thousand people
+	% description dataset
+%5. Experiments
+	%(Description of experiments performed in order to be able to answer the question as to whether or not a 	%deep learning auto encoder is well suited for anomaly detection in an unsupervised environment)
+%6. Results
+	%(Did our experiments yield results that help answer the question)
+%7. Conclusion
+	%(Conclusion based on experiments and results of the experiments, structure of dataset, feature extraction)
+%8. References
+
+\section{Introduction}
+\label{sec:Introduction}
+\textit{Anomaly detection} (commonly referred to as \textit{outlier detection}) is one of a few very common tasks in the field of Machine Learning. The goal of algorithms designed for the purpose of anomaly detection are concerned with finding data in a dataset that does not conform to a pattern. That means, the goal is to identify data points, that are special in regards to their behavior, compared to the data points in the dataset, that are considered "normal". \cite{survey:anomaly-detection} These data points are called outliers, because they show different behavior than one would expect. Figure \ref{fig:outlier-basic} shows a basic plot containing data points, with two different populations, along with two outliers, that do not seem to fit either pattern.\\
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/outlier_basic"}%width=\textwidth
+\caption{In this rather simple example, we can see two outliers represented by red crosses and two populations within one dataset... }
+\label{fig:outlier-basic}
+\end{figure}
+The value of identifying outliers in a dataset lies in the action one can take after detecting them. Common applications of anomaly detection algorithms include among others health care and fraud detection. In the former, those algorithms can for instance help identifying sick patients, by identifying anomalous vital signs compared in a group of similar patients. In the latter application, those algorithms can account for fast, actionable information in case of credit card fraud, which can be identified by anomalous purchases, given the owners purchase pattern in form of historical purchases. \\
+Anomaly detection can happen in a supervised, semi-supervised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection and the challenges we face in its context.
+%Difference to binary classification? -> Only data of one class given
+%simple plot
+%\subsection{Supervised Learning}
+\subsection{Challenges of Unsupervised Anomaly Detection}
+\label{subsec:Intro-challenges}
+One difficulty that arises in unsupervised anomaly detection is, since we do not have any labels for training data, we do not even know what we are looking for. That is, we do not know what a "normal" data point would look like, let alone what an anomalous point would look like. To put it in Ted Dunning's and Ellen Friedman's words: "Anomaly detection is about finding what you don't know to look for." \cite{book:mapr} 
+Since there is no labeled training data in the most widely applicable case of unsupervised anomaly detection, the approach of finding outliers is a different one compared to training a model and then predicting to which class an unseen data point belongs to (much like binary classification). Instead, in case of unsupervised anomaly detection, we generally assume that the number of "normal" data points exceeds the number of anomalous data points by far.\cite{survey:anomaly-detection} This assumption is fundamental to unsupervised outlier detection, since we would not be able to learn what is normal otherwise, as a relatively large number of anomalous points would change the skew the structure of the data in a way, that would make determining what is "normal" impossible . Not being able to determine what "normal" is, means there is no way of finding what is anomalous. Since the goal of anomaly detection is finding what is anomalous, unsupervised anomaly detection usually starts with figuring out what "normal" is. After achieving this (which, oftentimes, is much harder than it sounds), we can determine the deviation of a data point to what is "normal" using some similarity measure. There are, however, different algorithms dealing with the problem of unsupervised anomaly detection for different fields and problem domains. The main reason why there is no single approach applicable to each problem is, that there are tremendous differences in what is considered normal and what is considered anomalous, depending on the application domain we are looking at. Considering an example for this circumstance given in \cite{survey:anomaly-detection}, one can easily imagine why that is the case: "The exact notion of an anomaly is different for different application domains. For example, in the medical domain a small deviation from normal (e.g., fluctuations in body temperature) might be an anomaly, while similar deviation in the stock market domain (e.g., fluctuations in the value of a stock) might be considered as normal. Thus applying a technique developed in one domain to another is not straightforward." Besides the domain specificity of anomalies, there is also the context specificity of anomalies to keep in mind. This concept is illustrated in Figure \ref{fig:contextual-anomaly}, taken from \cite{book:mapr}
+\begin{figure}
+\begin{subfigure}{.5 \textwidth}
+	\centering
+	\includegraphics[width=\linewidth]{"pics/ekg"}
+	\caption{Obvious outlier in small sample size...}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{"pics/ekg2"}
+  \caption{...do not have to be outliers in the context of the whole dataset}
+  \label{fig:sfig2}
+\end{subfigure}
+\caption{Contextual anomaly}
+\label{fig:contextual-anomaly}
+\end{figure}
+
+Common techniques and algorithms used to perform unsupervised anomaly detection include clustering based methods, statistical techniques, information theoretic methods as well as spectral techniques. Note, however, that the choice of algorithm can depend heavily on the problem's domain.
+
+
+\subsection{Deep Learning Auto-Encoder}
+\label{subsec:Intro-deep}
+An auto-encoder, autoassociator or Diablo network is a specific type of artificial neural network. The goal of a deep learning auto-encoder is to learn a compressed encoding of a dataset. Due to that purpose, the auto-encoder consists of one input layer, one or more hidden layers and an output layer with equally as many neurons (i.e. features) as the input layer.  In order to achieve the goal of representing a dataset in a compressed manner, the auto-encoder is given the original dataset as input, while the target output is the input itself. \cite{rep:u-montreal} The loss function is some type of dissimilarity function (typically a squared error function) between the input and the output of the auto-encoder. This way, the auto-encoder is trained to learn a nonlinear (or linear), compressed representation of the original dataset. This, of course, makes the auto-encoder a useful tool for dimensionality reduction. For the special case of only one linear hidden layer with $k$ neurons where the mean squared error criterion is used to train the auto-encoder, then the hidden layer consisting of the $k$ neurons learn to represent the dataset in the dimension of its first $k$ principal components. \cite{rep:u-montreal} This is much like Principal Component Analysis (PCA). If, however, the hidden layer is of nonlinear nature, then the auto-encoder behaves very different compared to PCA. \cite{article:nonlinear-autoassociator}.
+The main application of the deep learning auto-encoder is dimensionality reduction. In our case, though, we want to use the deep learning auto-encoder in order to perform unsupervised anomaly detection. \\
+A schematic diagram of an auto-encoder taken from \cite{article:astronomy} is given in Figure \ref{fig:auto-encoder}. 
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/auto-encoder"}
+\caption{Schematic diagram of a basic auto-encoder with three input features}
+\label{fig:auto-encoder}
+\end{figure}
+%Schematic diagram of an autoencoder. The three input values are encoded to two feature variables. Pre-training (described in Section 3.3) defines the weight matrices W1 and W2.
+
+\section{Problem Statement} \label{problem_statement}
+%with Target and Scope
+%The \textit{proceedings} are the records of a conference.
+As already mentioned in \textbf{\ref{sec:Introduction}. \nameref{sec:Introduction}}, anomaly detection refers to the task of identifying observations, that do not match the general pattern of the data set they arise in. Oftentimes anomaly detection happens in an unsupervised context, which means that the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. This is also the case we want to investigate regarding the usability of a certain algorithm originally designed for a different purpose. Within the scope of this project, we analyze the performance of a particular algorithm more commonly used in a field different to the one of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a deep learning auto-encoder} (see section \ref{subsec:Intro-deep}) \textbf{well suited for anomaly detection in an unlabeled dataset?}
+\subsection{Target}\label{target}
+As stated above, target of this project is to evaluate the quality of a Deep Learning Auto-Encoder model for the task of identifying anomalies in an unsupervised context. Experiments comparing the performance of the deep learning auto-encoder with the performance of other algorithms in the same context shall indicate whether it is a good idea to use the auto-encoder in the context of unsupervised anomaly detection or not.
+\subsection{Scope}\label{ssec:scope}
+This project consists of various different steps in order to obtain an answer to the problem specified above.
+These steps can be outlined as follows:
+\begin{enumerate}
+	\item Study an existing implementation of the Deep Learning Auto-Encoder model
+	\item Apply this implementation to a given unlabeled dataset
+	\item Compare the outcome to already existing outcomes of other algorithms
+	\item Draw conclusions about the general suitability of the algorithm based on the results produced by the application of its implementation compared to those of other algorithms
+\end{enumerate}
+
+%\section{Problem Statement}
+\section{Methodology}
+Within the scope of this project, we use \textit{H2O.ai}'s (see section \ref{subsec:Metho-h2o}) implementation of the Deep Learning Auto-Encoder model through its Sparkling Water API on top of Apache spark. The dataset we use in order to be able to compare our results to those of our peers using different algorithms is the \textit{AXA Driver Telematics Analysis} dataset (see \ref{subsec:Metho-dataset}), which contains multiple vehicle traces by multiple drivers. 
+%The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
+%Since this dataset does not contain labels for the data, uploading our results to Kaggle, allows us to obtain a performance evaluation and being able to compare our results to other people's results, yielded from other algorithms. 
+%(How are we trying to answer the question)
+% Apply implementation of said algorithm on dataset that has been worked on by x-thousand people
+% description dataset
+\subsection{H2O.ai}
+\label{subsec:Metho-h2o}
+H2O by H2O.ai is an open source software project primarily used for fast scalable machine learning. The software offers a predictive analytics platform, combining high performance parallel processing in combination with an extensive machine learning library. \cite{website:h2o}\\
+In the context of scalable machine learning with H2O.ai, Sparkling Water is a....
+%TODO Write some more stuff about H2O/Sparkling Water
+\subsection{The AXA Driver Telematics Analysis Dataset}
+\label{subsec:Metho-dataset}
+The AXA Driver Telematics dataset is a dataset that was being released to the public in form of a Kaggle challenge 
+\footnote{Find the challenge with the dataset here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}}
+The dataset is a directory based dataset. This means meta data is implicitly contained in the directory and file structure of the dataset. In total there are logs for 2736 drivers. There is one designated folder for each driver, each of which contains 200 different drive traces in form of CSV files. In the raw data, a single drive is given by a single CSV file consisting of three columns and a varying number of rows. For every single drive, there is one column containing x coordinates one column containing y coordinates and one column containing the driver ID. Each row then represents the driver's position one second after the previous row. Every drive has been anonymized, such that each drive starts at position $(x, y) = (0, 0)$ and all the following coordinates have been randomly rotated.\\ 
+For instance, the first few rows in the CSV file representing driver one's first trip are shown in Table \ref{table:raw-trace}
+
+\begin{table}
+\centering
+\begin{tabular}{l c r}
+x & y & DriverID \\
+0 & 0 & 1\\
+18.6 & -11.1& 1 \\
+36.1 & -21.9 & 1 \\
+53.7 & -32.6 & 1 \\
+. & . & . \\
+. & . & . \\
+. & . & . \\
+\end{tabular}
+\caption{The first few rows of the driver one's first drive}
+\label{table:raw-trace}
+\end{table}
+
+
+%A plot of all drives of one driver can bee seen in Figure \ref{axa-trip}.\\
+The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers (otherwise not represented in the dataset) in that particular folder as well. These unlabeled outliers is what we hope end up identifying using the deep learning auto-encoder. \\
+Figure \ref{fig:axa-trip} (taken from \href{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}{kaggle.com}) shows what the whole dataset might look like, if we just plotted each driving trip as a line connecting its consecutive $(x, y)$ points.
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/axa-trip"}
+\caption{A visualization of the raw dataset. Each line is generated by connecting the $(x,y)$ coordinates of one particular trip and is thus a visualization of that one particular trip}
+\label{fig:axa-trip}
+\end{figure}
+
+ The size of the AXA Driver Telematics Analysis Dataset is 1.44 GB compressed and 5.92 GB in extracted state.
+ 
+
+\subsection{Feature Extraction}
+\label{subsec:Metho-feature}
+In order to be able to find the anomalous driving trips for each driver of our dataset by applying the H2O Deep Learning auto-encoder, we have to extract features from our driving traces first. Ideally, those feature would be meaningful, with large variance in those driving trips that were generated by other drivers. Leveraging Apache Flink through its Scala API, we extract the following feature from our dataset:\\
+\begin{enumerate}
+\item \label{itm:one} driverId\\
+The unique identifier of the driver this trip belongs to
+\item \label{itm:two} driveId\\
+The among one driver unique identifier of a drive
+\item \label{itm:three} duration\\
+Duration of the driving trip. \\
+\item \label{itm:four} distance\\
+The distance driven during the trip. Approximated like this $\sum_{i=2}^n{\lVert \begin{bmatrix}
+		  x_i\\
+		 y_i
+	\end{bmatrix}  
+	-
+	\begin{bmatrix}
+	x_{i - 1}\\
+	y_{i - 1}
+	\end{bmatrix}
+	\rVert}$
+\item \label{itm:five} speedMax
+\item \label{itm:six} speedMedian
+\item \label{itm:seven} speedMean
+\item \label{itm:eight} speedMeanDeviation
+\item \label{itm:nine} speedSd
+\item \label{itm:ten} speedMeanDriver (*1)
+\item \label{itm:eleven} speedSdDriver (*1)
+\item \label{itm:twelve} accMax
+\item \label{itm:thirteen} accMedian
+\item \label{itm:fourteen} accMean
+\item \label{itm:fifteen} accMeanDeviation
+\item \label{itm:sixteen} accSd
+\item \label{itm:seventeen} accMeanDriver (*1)
+\item \label{itm:eighteen} accSdDriver (*1)
+\item \label{itm:nineteen} angleMedian
+\item \label{itm:twenty} angleMean
+\item \label{itm:twenty-one} turns35P (*2)
+\item \label{itm:twenty-two} turns35N (*2)
+\item \label{itm:twenty-three} turns70P (*2)
+\item \label{itm:twenty-four} turns70N (*2)
+\item \label{itm:twenty-five} turns160P (*2)
+\item \label{itm:twenty-six} turns160N (*2)
+\item \label{itm:twenty-seven} turnsBiggerMean (*2)
+\item \label{itm:twenty-eight} turnsU (*2)
+\item \label{itm:twenty-nine} stopDriveRatio
+\item \label{itm:thirty} stops1Sec
+\item \label{itm:three}stops3Sec
+\item \label{itm:two} stops10Sec
+\item \label{itm:three} stops120Sec
+\end{enumerate}
+
+The features we extract and ultimately pass to the auto-encoder as input vectors, are of fundamental meaning for the quality of the anomaly detection. Depending on their significance for a driver's "fingerprint", the algorithm might perform well or it might produce unusable results in case the features do not bear a large significance for a driver's pattern of driving. 
+
+Figure \ref{fig:duration-vs-distance} gives a small overview of the dataset by displaying the duration and distance of every single drive for a few drivers. What we can see here already, is a rather large variance in trip duration among different drivers. Also, there seem to be cases where the driver did barely move, as well as very short trips (short in the sense of time passed during the trip).\\
+Figure \ref{}
+\begin{figure}
+\centering
+\includegraphics[width=1.2\linewidth]{"pics/duration-vs-distance-driver"}
+\caption{Schematic visualization of our feature extraction}
+\label{fig:feature-extraction}
+\end{figure}
+
+
+\begin{figure*}
+\centering
+\includegraphics[width=1.2\linewidth]{"pics/duration-vs-distance-driver"}
+\caption{Plot of duration versus distance for each drive by each driver. }
+\label{fig:duration-vs-distance}
+\end{figure*}
+ 
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/box-plot-distance"}%width=\textwidth
+\caption{box-plot-distance }
+\label{fig:box-plot-distance}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/box-plot-duration"}%width=\textwidth
+\caption{box-plot-duration}
+\label{fig:box-plot-duration}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/number-of-breaks-10-120"}%width=\textwidth
+\caption{number-of-breaks-10-120}
+\label{fig:number-of-breaks-10-120}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/box-plot-mean-speed"}%width=\textwidth
+\caption{box-plot-mean-speed}
+\label{fig:box-plot-mean-speed}
+\end{figure}
+
+\section{Experiments}
+\label{sec:Experiments}
+\section{Results}
+\label{sec:Results}
+\section{Conclusion}
+\label{sec:Conclusion}
+%\section{References}
+%\label{sec:References}
+
+%\section{Project Plan}\label{projcet_plan}
+%As specified in \ref{ssec:scope}, there are four different steps to be made in order to obtain an answer %to the original problem statement. These steps are 
+%In order to be able to reach our goal specified in \textbf{\ref{problem_statement}. \nameref{problem_statement}}, we need the following things:
+ %\begin{enumerate}
+ %	\item An implementation of the Deep Learning Auto-Encoder model
+% 	\item A dataset, and
+%	\item Reference results
+%\end{enumerate}
+%\subsection{Objectives}\label{objectives}
+%The main objective of this project is to evaluate the suitability of a Deep Learning Auto-Encoder model %for identifying anomalies. 
+%\subsection{Methodology, Objectives and Experiments}\label{planned_methodology}
+
+I%n this project, we use \textit{H2O.ai}'s\footnote{An open source parallel processing engine for machine learning} implementation of the Deep Learning Auto-Encoder model through its Scala API on top of Apache spark. The dataset we use in order to being able to compare our results to those of our peers is the \textit{AXA Driver Telematics Analysis} dataset\footnote{This dataset was released to the public as a competition on \url{https://www.kaggle.com/}. It can be found here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data?drivers.zip}}, which contains multiple vehicle traces by multiple drivers. The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
+%Since this dataset does not contain labels for the data, uploading our results to Kaggle, allows us to obtain a performance evaluation and being able to compare our results to other people's results, yielded from other algorithms. 
+	
+
+
+
+
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+
+\bibliographystyle{abbrv}
+\bibliography{vldb_sample}  % vldb_sample.bib is the name of the Bibliography in this case
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+
+%\subsection{References}
+%Generated by bibtex from your ~.bib file.  Run latex,
+%then bibtex, then latex twice (to resolve references).
+
+%APPENDIX is optional.
+% ****************** APPENDIX **************************************
+% Example of an appendix; typically would start on a new page
+%pagebreak
+
+
+
+
+\end{document}
