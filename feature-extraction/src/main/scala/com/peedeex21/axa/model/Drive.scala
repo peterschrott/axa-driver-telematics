@@ -2,6 +2,7 @@ package com.peedeex21.axa.model
 
 import com.peedeex21.axa.utils.Utils
 
+import scala.collection.mutable
 import scala.collection.mutable.HashMap
 
 /**
@@ -85,6 +86,24 @@ class Drive() extends Serializable {
     this.topNValues = (rowCount * topN).toInt
     this.driverId = driverId
     this.driveId = driveId
+  }
+
+  def this(driverId: Int, driveId: Int, samples: List[DriveSample]) {
+    this()
+    this.coordinates = deserializeSamples(samples)
+    this.rowCount = coordinates.size
+    this.topNValues = (rowCount * topN).toInt
+    this.driverId = driverId
+    this.driveId = driveId
+  }
+
+  def deserializeSamples(samples: List[DriveSample]): mutable.HashMap[Int, Vector2D] = {
+    val tmpMap = HashMap.empty[Int, Vector2D]
+    for(sample <- samples) {
+      //System.out.println(sample.seqNo)
+      tmpMap += (sample.seqNo -> sample.toVector2D)
+    }
+    tmpMap
   }
 
   /**
@@ -419,13 +438,13 @@ class Drive() extends Serializable {
   }
 
   def transformToDriveMeta: DriveMeta = {
-    new DriveMeta(this.driverId, this.driveId, this.duration, this.distance, this.speedMin,
-      this.speedMax, this.speedMedian, this.speedMean, this.speedMeanDeviation, this.speedSd,
-      this.speedMeanDriver, this.speedSdDriver, this.accMin, this.accMax, this.accMedian,
-      this.accMean, this.accMeanDeviation, this.accSd, this.accMeanDriver, this.accSdDriver,
-      this.angleMedian, this.angleMean, this.turns35P, this.turns35N, this.turns70P,
-      this.turns70N, this.turns160P, this.turns160N, this.turnsBiggerMean, this.turnsU,
-      this.stopDriveRatio, this.stops1Sec, this.stops3Sec, this.stops10Sec, this.stops120Sec)
+    new DriveMeta(this.driverId, this.driveId, this.duration, this.distance, this.speedMax,
+      this.speedMedian, this.speedMean, this.speedMeanDeviation, this.speedSd,
+      this.speedMeanDriver, this.speedSdDriver, this.accMax, this.accMedian, this.accMean,
+      this.accMeanDeviation, this.accSd, this.accMeanDriver, this.accSdDriver, this.angleMedian,
+      this.angleMean, this.turns35P, this.turns35N, this.turns70P, this.turns70N, this.turns160P,
+      this.turns160N, this.turnsBiggerMean, this.turnsU, this.stopDriveRatio, this.stops1Sec,
+      this.stops3Sec, this.stops10Sec, this.stops120Sec)
   }
 
 }
@@ -440,8 +459,8 @@ object Drive {
    */
   val deltaT = 1
 
-  def apply(driverId: Int, driveId: Int, content: String): Drive = {
-    new Drive(driverId, driveId, content)
+  def apply(driverId: Int, driveId: Int, samples: List[DriveSample]): Drive = {
+    new Drive(driverId, driveId, samples)
   }
 
 }

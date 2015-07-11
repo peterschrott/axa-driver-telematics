@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>driver-analysis</artifactId>
-    <name>AXA Driver Telematic (Driver Analysis)</name>
+    <name>AXA Driver Telematics (Driver Analysis)</name>
     <packaging>pom</packaging>
 
     <properties>

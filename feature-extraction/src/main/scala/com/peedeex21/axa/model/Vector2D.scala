@@ -69,7 +69,7 @@ class Vector2D() {
    * @param x x coordinate of Vector2D
    * @param y y coordinate of Vector2D
    */
-  private def this(x: Double, y: Double) {
+  def this(x: Double, y: Double) {
     this()
     this.x = x
     this.y = y

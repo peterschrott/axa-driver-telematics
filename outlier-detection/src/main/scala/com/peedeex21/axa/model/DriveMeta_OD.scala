@@ -1,12 +1,10 @@
 package com.peedeex21.axa.model
 
-import org.apache.flink.ml.math.DenseVector
-
 /**
  * Created by Peter Schrott
  */
 @SerialVersionUID(1L)
-class DriveMeta extends Product with Serializable {
+class DriveMeta_OD extends Product with Serializable {
 
   var driverId = 0.0
   var driveId = 0.0
@@ -91,14 +89,6 @@ class DriveMeta extends Product with Serializable {
     this.stops120Sec = stops120Sec
   }
 
-  def toFeatureVector: DenseVector = {
-    DenseVector(Array(duration, distance, speedMax, speedMedian, speedMean, speedMeanDeviation,
-      speedSd, speedMeanDriver, speedSdDriver, accMax, accMedian, accMean, accMeanDeviation,
-      accSd, accMeanDriver, accSdDriver, angleMedian, angleMean, turns35P, turns35N, turns70P,
-      turns70N, turns160P, turns160N, turnsBiggerMean, turnsU, stopDriveRatio, stops1Sec,
-      stops3Sec, stops10Sec, stops120Sec))
-  }
-
   override def toString: String = {
     driverId + "," + driveId + "," + duration + "," + distance + "," +
       speedMax + "," + speedMedian + "," + speedMean + "," + speedMeanDeviation + "," + speedSd + "," +
@@ -150,11 +140,11 @@ class DriveMeta extends Product with Serializable {
 
   override def productArity: Int = 33
 
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[DriveMeta]
+  override def canEqual(that: Any): Boolean = that.isInstanceOf[DriveMeta_OD]
 
 }
 
-object DriveMeta {
+object DriveMeta_OD {
 
   val pojoFields = Array("driverId", "driveId", "duration", "distance", "speedMax",
     "speedMedian", "speedMean", "speedMeanDeviation", "speedSd", "speedMeanDriver",
@@ -163,4 +153,9 @@ object DriveMeta {
     "turns70P", "turns70N", "turns160P", "turns160N", "turnsBiggerMean", "turnsU",
     "stopDriveRatio", "stops1Sec", "stops3Sec", "stops10Sec", "stops120Sec")
 
+  val nonFeatures = Array("driverId", "driveId", "speedMeanDriver","speedSdDriver",
+    "accMeanDriver", "accSdDriver")
+  
+  val features = this.pojoFields.diff(this.nonFeatures)
+  
 }

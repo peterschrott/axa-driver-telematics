@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 /**
- * !!! FOR NOW THIS DOES NOT WORK IN PARALLEL EXECUTION !!
  * <p>
  * This is a simple input format for the data set of the Kaggle competition AXA Driver Telematics.
  * <p>
@@ -36,7 +35,7 @@ public class AxaInputFormat extends FileInputFormat<Drive> {
   public AxaInputFormat() {
     super();
     /* no splitting of the file */
-    super.unsplittable = false;
+    super.unsplittable = true;
   }
 
   @Override
