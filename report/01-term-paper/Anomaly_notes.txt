@@ -11,7 +11,8 @@ Papers notes:
 	Contextual anomaly: Context specific outlier
 	-weather of 32 degree Fahrenheit is only anomalous in July, not in January
 	-context is a user in our case
-
+	- The AXA Driver Analytics Dataset:
+		- real world application
 
 
 
@@ -31,3 +32,8 @@ Plots:
 		frame.axes.get_yaxis().set_ticks([])
 		plt.show()
 		
+
+Presentation notes:
+	- Spark not as good as in Flink when it comes to file reading/writing
+		- no OVERWRITING  of files possible??
+	- H2O lacks documentation (fortunately, their Chief architect responds to emails at 6 a.m.)
