@@ -23,7 +23,7 @@ case class KaggleResult(driverId: Int, driveId: Int, outlier: Boolean) {
    * 1_1,1
    */
   override def toString = {
-    val prob = if (outlier) "1" else "0"
+    val prob = if (outlier) "0" else "1"
     driverId + "_" + driveId + "," + prob
   }
 }
@@ -194,9 +194,6 @@ object OutlierDetection extends SparkContextSupport {
     })
 
     nOutlierByDriver.saveAsTextFile(outputPath + "/nOutlierByDriver")
-
-    val outliers = kaggleResultRdd.filter(_.outlier)
-    outliers.foreach(println)
 
     // Stop Spark cluster and destroy all executors
     if (System.getProperty("spark.ext.h2o.preserve.executors") == null) {
