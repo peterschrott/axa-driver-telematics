@@ -116,7 +116,7 @@ object OutlierDetection extends SparkContextSupport {
     // use the autoencoder, obviously
     dlParams._autoencoder = true
     // one hidden layer with 20 neurons
-    dlParams._hidden = Array(17)
+    dlParams._hidden = Array(8)
     // no dropping of constant colors
     dlParams._ignore_const_cols = false
     // number of passes over the training dataset to be carried out
