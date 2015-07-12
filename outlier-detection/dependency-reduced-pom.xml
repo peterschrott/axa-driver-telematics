@@ -36,7 +36,7 @@
               </filters>
               <transformers>
                 <transformer>
-                  <mainClass>com.peedeex21.axa.OutlierDetection</mainClass>
+                  <mainClass>com.peedeex21.axa.OutlierDetection2</mainClass>
                 </transformer>
               </transformers>
             </configuration>
