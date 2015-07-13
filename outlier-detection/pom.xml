@@ -86,7 +86,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <artifactSet>
+                            <!--artifactSet>
                                 <excludes>
                                     <exclude>org.scala-lang:scala-library</exclude>
                                     <exclude>org.scala-lang:scala-compiler</exclude>
@@ -148,7 +148,7 @@
                                     <exclude>commons-io:commons-io</exclude>
                                     <exclude>commons-cli:commons-cli</exclude>
                                 </excludes>
-                            </artifactSet>
+                            </artifactSet-->
                             <filters>
                               <filter>
                                 <artifact>*:*</artifact>
@@ -163,7 +163,7 @@
                             <transformers>
                                 <!-- add Main-Class to manifest file -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.peedeex21.axa.OutlierDetection</mainClass>
+                                    <mainClass>com.peedeex21.axa.OutlierDetection2</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
