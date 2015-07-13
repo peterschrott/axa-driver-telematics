@@ -330,18 +330,19 @@ object OutlierDetection2 extends SparkContextSupport {
       // unsupervised: pick any non-constant column
       dlParams._response_column = Symbol(fieldNames(2))
       // the activation function (non-linearity) to be used the neurons in the hidden layers.
-      dlParams._activation = DeepLearningParameters.Activation.Tanh
+      dlParams._activation = DeepLearningParameters.Activation.MaxoutWithDropout
       // use the autoencoder, obviously
       dlParams._autoencoder = true
       // one hidden layer with 20 neurons
-      dlParams._hidden = Array(12)
+      dlParams._hidden = Array(10)
       // no dropping of constant colors
       dlParams._ignore_const_cols = false
       // number of passes over the training dataset to be carried out
-      dlParams._epochs = 3
+      dlParams._epochs = 100
       // do some regularisation
       dlParams._l1 = this.l1Norm
       dlParams._l2 = this.l2Norm
+      dlParams._loss = DeepLearningParameters.Loss.CrossEntropy
 
 
       /* build the deep learning model for the auto encoder */

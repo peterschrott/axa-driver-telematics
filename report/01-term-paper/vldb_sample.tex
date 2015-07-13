@@ -72,61 +72,71 @@ In this work, we investigate the performance of a specific algorithm from the fa
 
 \section{Introduction}
 \label{sec:Introduction}
-\textit{Anomaly detection} (commonly referred to as \textit{outlier detection}) is one of a few very common tasks in the field of Machine Learning. The goal of algorithms designed for the purpose of anomaly detection are concerned with finding data in a dataset that does not conform to a pattern. That means, the goal is to identify data points, that are special in regards to their behavior, compared to the data points in the dataset, that are considered "normal". \cite{survey:anomaly-detection} These data points are called outliers, because they show different behavior than one would expect. Figure \ref{fig:outlier-basic} shows a basic plot containing data points, with two different populations, along with two outliers, that do not seem to fit either pattern.\\
+
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{"pics/outlier_basic"}%width=\textwidth
-\caption{In this simple example, we can see two outliers within one dataset with two populations. }
+\includegraphics[width=\linewidth]{"pics/outlier_basic"}
+\caption{Sample of two populations with two outliers.}
 \label{fig:outlier-basic}
 \end{figure}
+
+\textit{Anomaly detection} (commonly referred to as \textit{outlier detection}) is one of a few very common tasks in the field of Machine Learning. The goal of algorithms designed for the purpose of anomaly detection are concerned with finding data in a dataset that does not conform to a pattern. That means, the goal is to identify data points, that are special in regards to their behavior, compared to the data points in the dataset, that are considered "normal". \cite{survey:anomaly-detection} These data points are called outliers, because they show different behavior than one would expect. Figure \ref{fig:outlier-basic} shows a basic plot containing data points, with two different populations, along with two outliers, that do not seem to fit either pattern.\\
 The value of identifying outliers in a dataset lies in the action one can take after detecting them. Common applications of anomaly detection algorithms include among others health care and fraud detection. In the former, those algorithms can for instance help identifying sick patients, by identifying anomalous vital signs compared in a group of similar patients. In the latter application, those algorithms can account for fast, actionable information in case of credit card fraud, which can be identified by anomalous purchases, given the owners purchase pattern in form of historical purchases. \\
 Anomaly detection can happen in a supervised, semi-supervised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection and the challenges we face in its context.
+
 %Difference to binary classification? -> Only data of one class given
 %simple plot
 %\subsection{Supervised Learning}
+
 \subsection{Challenges of Unsupervised Anomaly Detection}
 \label{subsec:Intro-challenges}
-One difficulty that arises in unsupervised anomaly detection is, since we do not have any labels for training data, we do not even know what we are looking for. That is, we do not know what a "normal" data point would look like, let alone what an anomalous point would look like. To put it in Ted Dunning's and Ellen Friedman's words: "Anomaly detection is about finding what you don't know to look for." \cite{book:mapr} 
-Since there is no labeled training data in the most widely applicable case of unsupervised anomaly detection, the approach of finding outliers is a different one compared to training a model and then predicting to which class an unseen data point belongs to (much like binary classification). Instead, in case of unsupervised anomaly detection, we generally assume that the number of "normal" data points exceeds the number of anomalous data points by far.\cite{survey:anomaly-detection} This assumption is fundamental to unsupervised outlier detection, since we would not be able to learn what is normal otherwise, as a relatively large number of anomalous points would change the skew the structure of the data in a way, that would make determining what is "normal" impossible . Not being able to determine what "normal" is, means there is no way of finding what is anomalous. Since the goal of anomaly detection is finding what is anomalous, unsupervised anomaly detection usually starts with figuring out what "normal" is. After achieving this (which, oftentimes, is much harder than it sounds), we can determine the deviation of a data point to what is "normal" using some similarity measure. There are, however, different algorithms dealing with the problem of unsupervised anomaly detection for different fields and problem domains. The main reason why there is no single approach applicable to each problem is, that there are tremendous differences in what is considered normal and what is considered anomalous, depending on the application domain we are looking at. Considering an example for this circumstance given in \cite{survey:anomaly-detection}, one can easily imagine why that is the case: "The exact notion of an anomaly is different for different application domains. For example, in the medical domain a small deviation from normal (e.g., fluctuations in body temperature) might be an anomaly, while similar deviation in the stock market domain (e.g., fluctuations in the value of a stock) might be considered as normal. Thus applying a technique developed in one domain to another is not straightforward." Besides the domain specificity of anomalies, there is also the context specificity of anomalies to keep in mind. This concept is illustrated in Figure \ref{fig:contextual-anomaly}, taken from \cite{book:mapr}
+
 \begin{figure}
 \begin{subfigure}{.5 \textwidth}
 	\centering
 	\includegraphics[width=\linewidth]{"pics/ekg"}
-	\caption{Obvious outlier in small sample size...}
+	\caption{Obvious outlier in small sample size ...}
 	\label{subfig:context-a}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=.9\linewidth]{"pics/ekg2"}
-  \caption{...do not have to be outliers in the context of the whole dataset}
+  \caption{... are not necessarily outliers in the context of the whole dataset}
   \label{subfig:context-b}
 \end{subfigure}
 \caption{Contextual anomaly}
 \label{fig:contextual-anomaly}
 \end{figure}
 
+One difficulty that arises in unsupervised anomaly detection is, since we do not have any labels for training data, we do not even know what we are looking for. That is, we do not know what a "normal" data point would look like, let alone what an anomalous point would look like. To put it in Ted Dunning's and Ellen Friedman's words: "Anomaly detection is about finding what you don't know to look for." \cite{book:mapr} 
+Since there is no labeled training data in the most widely applicable case of unsupervised anomaly detection, the approach of finding outliers is a different one compared to training a model and then predicting to which class an unseen data point belongs to (much like binary classification). Instead, in case of unsupervised anomaly detection, we generally assume that the number of "normal" data points exceeds the number of anomalous data points by far.\cite{survey:anomaly-detection} This assumption is fundamental to unsupervised outlier detection, since we would not be able to learn what is normal otherwise, as a relatively large number of anomalous points would change the skew the structure of the data in a way, that would make determining what is "normal" impossible . Not being able to determine what "normal" is, means there is no way of finding what is anomalous. Since the goal of anomaly detection is finding what is anomalous, unsupervised anomaly detection usually starts with figuring out what "normal" is. After achieving this (which, oftentimes, is much harder than it sounds), we can determine the deviation of a data point to what is "normal" using some similarity measure. There are, however, different algorithms dealing with the problem of unsupervised anomaly detection for different fields and problem domains. The main reason why there is no single approach applicable to each problem is, that there are tremendous differences in what is considered normal and what is considered anomalous, depending on the application domain we are looking at. Considering an example for this circumstance given in \cite{survey:anomaly-detection}, one can easily imagine why that is the case: "The exact notion of an anomaly is different for different application domains. For example, in the medical domain a small deviation from normal (e.g., fluctuations in body temperature) might be an anomaly, while similar deviation in the stock market domain (e.g., fluctuations in the value of a stock) might be considered as normal. Thus applying a technique developed in one domain to another is not straightforward." Besides the domain specificity of anomalies, there is also the context specificity of anomalies to keep in mind. This concept is illustrated in Figure \ref{fig:contextual-anomaly}, taken from \cite{book:mapr} \\
 Common techniques and algorithms used to perform unsupervised anomaly detection include clustering based methods, statistical techniques, information theoretic methods as well as spectral techniques. Note, however, that the choice of algorithm can depend heavily on the problem's domain.
 
 
 \subsection{Deep Learning Auto-Encoder}
 \label{subsec:Intro-deep}
-An auto-encoder, autoassociator or Diablo network is a specific type of artificial neural network. The goal of a deep learning auto-encoder is to learn a compressed encoding of a dataset. Due to that purpose, the auto-encoder consists of one input layer, one or more hidden layers and an output layer with equally as many neurons (i.e. features) as the input layer.  In order to achieve the goal of representing a dataset in a compressed manner, the auto-encoder is given the original dataset as input, while the target output is the input itself. \cite{rep:u-montreal} The loss function is some type of dissimilarity function (typically a squared error function) between the input and the output of the auto-encoder. This way, the auto-encoder is forced to learn a nonlinear (or linear), compressed representation of the original dataset. This, of course, makes the auto-encoder a useful tool for dimensionality reduction. For the special case where there is only one linear hidden layer with $k$ neurons and the mean squared error criterion is used to train the auto-encoder, the hidden layer consisting of the $k$ neurons learns to represent the dataset in the dimension of its first $k$ principal components. \cite{rep:u-montreal} This is much like Principal Component Analysis (PCA). If, however, the hidden layer is of nonlinear nature, then the auto-encoder behaves very different compared to PCA. \cite{article:nonlinear-autoassociator}.
-Due to its ability to learn a compressed version of the dataset, the main application of the deep learning auto-encoder is obviously dimensionality reduction. In our case, though, we want to use the deep learning auto-encoder in order to perform unsupervised anomaly detection. \\
-A schematic diagram of an auto-encoder taken from \cite{article:astronomy} is given in Figure \ref{fig:auto-encoder}. 
+
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{"pics/auto-encoder"}
 \caption{Schematic diagram of a basic auto-encoder with three input features}
 \label{fig:auto-encoder}
 \end{figure}
+
+An auto-encoder, autoassociator or Diablo network is a specific type of artificial neural network. The goal of a deep learning auto-encoder is to learn a compressed encoding of a dataset. Due to that purpose, the auto-encoder consists of one input layer, one or more hidden layers and an output layer with equally as many neurons (i.e. features) as the input layer.  In order to achieve the goal of representing a dataset in a compressed manner, the auto-encoder is given the original dataset as input, while the target output is the input itself. \cite{rep:u-montreal} The loss function is some type of dissimilarity function (typically a squared error function) between the input and the output of the auto-encoder. This way, the auto-encoder is forced to learn a nonlinear (or linear), compressed representation of the original dataset. This, of course, makes the auto-encoder a useful tool for dimensionality reduction. For the special case where there is only one linear hidden layer with $k$ neurons and the mean squared error criterion is used to train the auto-encoder, the hidden layer consisting of the $k$ neurons learns to represent the dataset in the dimension of its first $k$ principal components. \cite{rep:u-montreal} This is much like Principal Component Analysis (PCA). If, however, the hidden layer is of nonlinear nature, then the auto-encoder behaves very different compared to PCA. \cite{article:nonlinear-autoassociator}.
+Due to its ability to learn a compressed version of the dataset, the main application of the deep learning auto-encoder is obviously dimensionality reduction. In our case, though, we want to use the deep learning auto-encoder in order to perform unsupervised anomaly detection. \\
+A schematic diagram of an auto-encoder taken from \cite{article:astronomy} is given in Figure \ref{fig:auto-encoder}. 
+
 %Schematic diagram of an autoencoder. The three input values are encoded to two feature variables. Pre-training (described in Section 3.3) defines the weight matrices W1 and W2.
 
 \section{Problem Statement} \label{problem_statement}
 %with Target and Scope
 %The \textit{proceedings} are the records of a conference.
 As already mentioned in \textbf{\ref{sec:Introduction}. \nameref{sec:Introduction}}, anomaly detection refers to the task of identifying observations, that do not match the general pattern of the data set they arise in. Oftentimes anomaly detection happens in an unsupervised context, which means that the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. This is also the case we want to investigate regarding the usability of a certain algorithm originally designed for a different purpose. Within the scope of this project, we analyze the performance of a particular algorithm more commonly used in a field different to the one of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a deep learning auto-encoder} (see section \ref{subsec:Intro-deep}) \textbf{well suited for anomaly detection in an unlabeled dataset?}
+
 \subsection{Target}\label{target}
 As stated above, target of this project is to evaluate the quality of a deep learning auto-encoder model for the task of identifying anomalies in an unsupervised context. Experiments comparing the performance of the deep learning auto-encoder with the performance of other algorithms in the same context shall indicate whether it is a good idea to use the auto-encoder in the context of unsupervised anomaly detection or not.
+
 \subsection{Scope}\label{ssec:scope}
 This project consists of various different steps in order to obtain an answer to the problem specified above.
 These steps can be outlined as follows:
@@ -137,29 +147,17 @@ These steps can be outlined as follows:
 	\item Draw conclusions about the general suitability of the algorithm based on the results produced by the application of its implementation compared to those of other algorithms
 \end{enumerate}
 
-%\section{Problem Statement}
 \section{Methodology}
-Within the scope of this project, we use H2O.ai's (see section \ref{subsec:Metho-h2o}) implementation of the deep learning auto-encoder model through its Sparkling Water API on top of Apache Spark. The dataset we use in order to be able to compare our results to those of our peers using different algorithms is the AXA Driver Telematics Analysis dataset (see \ref{subsec:Metho-dataset}), which contains multiple trips by multiple drivers. 
+Within the scope of this project, we use H2O.ai's (see section \ref{subsec:Metho-h2o}) implementation of the deep learning auto-encoder model through its Sparkling Water API on top of Apache Spark. The dataset we use in order to be able to compare our results to those of our peers using different algorithms is the AXA Driver Telematics Analysis dataset (see \ref{subsec:Metho-dataset}), which contains multiple trips by multiple drivers.
+
 %The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
 %Since this dataset does not contain labels for the data, uploading our results to Kaggle, allows us to obtain a performance evaluation and being able to compare our results to other people's results, yielded from other algorithms. 
 %(How are we trying to answer the question)
 % Apply implementation of said algorithm on dataset that has been worked on by x-thousand people
 % description dataset
+
 \subsection{H2O.ai  and H2O Deep Learning}
 \label{subsec:Metho-h2o}
-H2O by H2O.ai is an open source software project primarily used for fast scalable in-memory machine learning. The product strongly aims for data scientists who work in a distributed manner. The software offers a predictive analytics platform, combining high performance parallel processing with an extensive machine learning library. \cite{website:h2o} H2O was built on top of Apache Hadoop as well as Apache Spark. As of February 2015, the software has more than 12,000 users and is deployed by more than 2,000 companies, including PayPal, Nielsen and Cisco. \cite{booklet:deep-learning}\\
-
-H2O is shipped with its own distirbuted in-memory data store which is integrated as an key-value store on top of non-blocking hash maps. The basic type for data sets in H2O is the H2OFrame. An H2OFrame consits of vectors, where each vector represents one row, respectivle one feature. As opposed to the H2OFrame, the vectors are immutable. The access to the data is granted by an R evaluation layer. This layer also builds the bridge to the REST interface. For the computation part the base is build by basic operations as fork, join and map reduce tasks. These are used by the H2O prediction engine. All algorithm, either provided by H2O or custom implementations, use that engine to build their individual model. The data storage and data analysis takes palace in the so called H2O cloud which runs on one or more nodes. For each node a Java Virtual Machine is instanciated and perform the above described operations. The H2O context is accessable through network by interfaces for Python, R, Java, Scala, Tabelau/Excel or the H2O WebUI. \\
-
-Besides Distributed Random Forests, K-means, Generalized Linear Model and Gradient Boosting Machine, H2O also offers readily available deep learning algorithms, which includes the auto-encoder. \\
-As mentioned in Section \ref{subsec:Intro-deep}, the deep learning auto-encoder is an algorithm that is used primarily for dimensionality reduction. The way we want to use the auto-encoder to detect outliers in an unsupervised manner is shown in figure \ref{fig:auto-encoder-reconstruction}. As it can be seen there, the algorithm is forced to learn the identity through a non-linear, reduced representation of original data. This is done by first reducing the data's dimensionality and then reconstructing it from that reduced representation. Since one assumption in unsupervised anomaly detection is that the number of normal data points exceeds the number of anomalous ones by far (see section \ref{subsec:Intro-challenges}), that learned model will be mostly influenced more by what is normal in the data than by what is anomalous. Thus, attempting to reconstruct a data point from its reduced representation will have a greater error than anomalous data points that it will have for normal data points.
-
-%\begin{figure}
-%\centering
-%\includegraphics[width=\linewidth]{"pics/reconstruction"}
-%\caption{Schematic overview of anomaly detection using a deep learning auto-encoder}
-%\label{fig:outlier-reconstruction}
-%\end{figure}
 
 \begin{figure}
 \begin{subfigure}{.5 \textwidth}
@@ -184,8 +182,25 @@ As mentioned in Section \ref{subsec:Intro-deep}, the deep learning auto-encoder 
 \label{fig:auto-encoder-reconstruction}
 \end{figure}
 
+H2O by H2O.ai is an open source software project primarily used for fast scalable in-memory machine learning. The product strongly aims for data scientists who work in a distributed manner. The software offers a predictive analytics platform, combining high performance parallel processing with an extensive machine learning library. \cite{website:h2o} H2O was built on top of Apache Hadoop as well as Apache Spark. As of February 2015, the software has more than 12,000 users and is deployed by more than 2,000 companies, including PayPal, Nielsen and Cisco. \cite{booklet:deep-learning}\\
+
+H2O is shipped with its own distirbuted in-memory data store which is integrated as an key-value store on top of non-blocking hash maps. The basic type for data sets in H2O is the H2OFrame. An H2OFrame consits of vectors, where each vector represents one row, respectivle one feature. As opposed to the H2OFrame, the vectors are immutable. The access to the data is granted by an R evaluation layer. This layer also builds the bridge to the REST interface. For the computation part the base is build by basic operations as fork, join and map reduce tasks. These are used by the H2O prediction engine. All algorithm, either provided by H2O or custom implementations, use that engine to build their individual model. The data storage and data analysis takes palace in the so called H2O cloud which runs on one or more nodes. For each node a Java Virtual Machine is instanciated and perform the above described operations. The H2O context is accessable through network by interfaces for Python, R, Java, Scala, Tabelau/Excel or the H2O WebUI. \\
+
+Besides Distributed Random Forests, K-means, Generalized Linear Model and Gradient Boosting Machine, H2O also offers readily available deep learning algorithms, which includes the auto-encoder. \\
+As mentioned in Section \ref{subsec:Intro-deep}, the deep learning auto-encoder is an algorithm that is used primarily for dimensionality reduction. The way we want to use the auto-encoder to detect outliers in an unsupervised manner is shown in figure \ref{fig:auto-encoder-reconstruction}. As it can be seen there, the algorithm is forced to learn the identity through a non-linear, reduced representation of original data. This is done by first reducing the data's dimensionality and then reconstructing it from that reduced representation. Since one assumption in unsupervised anomaly detection is that the number of normal data points exceeds the number of anomalous ones by far (see section \ref{subsec:Intro-challenges}), that learned model will be mostly influenced more by what is normal in the data than by what is anomalous. Thus, attempting to reconstruct a data point from its reduced representation will have a greater error than anomalous data points that it will have for normal data points.\\
+The H2O version of its deep learning auto-encoder is based on simple map reduce tasks as of that is a fast an memory efficient implementation. It profits from an multi-threaded implementation that allows a distributed parallel computation for deployment on a multi-node cluster. The algorithm uses stochastic gradient descent for the problem of minimizing the loss function. It provides regularisation including L1, L2, dropout and Hogwild!. Also the activation and loss function can be parametrized by the user.
+
+
 \subsection{The AXA Driver Telematics Analysis \\Dataset}
 \label{subsec:Metho-dataset}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/axa-trip"}
+\caption{A visualization of the raw dataset. Each line is generated by connecting the $(x,y)$ coordinates of one particular trip and is thus a visualization of that one particular trip}
+\label{fig:axa-trip}
+\end{figure}
+
 The AXA Driver Telematics dataset is a dataset that was being released to the public in form of a Kaggle challenge 
 \footnote{Find the challenge with the dataset here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}}
 The dataset is a directory based dataset. This means meta data is implicitly contained in the directory and file structure of the dataset. In total there are logs for 2736 drivers. There is one designated folder for each driver, each of which contains 200 different trips in form of CSV files. In the raw data, a single trip is given by a single CSV file consisting of two columns and a varying number of rows. For every single drive, there is one column containing x coordinates one column containing y coordinates. Each row then represents the driver's position one second after the previous row. Every trip has been anonymized, such that each trip starts at position $(x, y) = (0, 0)$ and all the following coordinates have been randomly rotated.\\ 
@@ -203,20 +218,12 @@ x & y\\
 . & . \\
 . & . \\	
 \end{tabular}
-\caption{The first few rows of the driver one's first drive}
+\caption{The first few rows of the driver one's first trip}
 \label{table:raw-trace}
 \end{table}
 
-
-%A plot of all drives of one driver can bee seen in Figure \ref{axa-trip}.\\
 The catch with this dataset is that while there is a folder for each driver with a number of his or her respective trip, there is always a varying and unknown number of trips that were being generated by other drivers (otherwise not represented in the dataset) in that particular folder as well. These unlabeled outliers is what we hope end up identifying using the deep learning auto-encoder. \\
-Figure \ref{fig:axa-trip} (taken from \href{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}{kaggle.com}) shows what the whole dataset might look like, if we just plotted each driving trip as a line connecting its consecutive $(x, y)$ points.
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{"pics/axa-trip"}
-\caption{A visualization of the raw dataset. Each line is generated by connecting the $(x,y)$ coordinates of one particular trip and is thus a visualization of that one particular trip}
-\label{fig:axa-trip}
-\end{figure}
+Figure \ref{fig:axa-trip} (taken from \href{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}{kaggle.com}) shows what the whole dataset might look like, if we just plotted each driving trip as a line connecting its consecutive $(x, y)$ points.\\
 
 With a size of 1.44 GB compressed and 5.92 GB in extracted state, this dataset can be considered reasonably large and thus, processing the dataset on a parallel system is justified. \\
 The fact, that AXA, a major car insurance provider (amongst other things), releases a dataset of this kind with the goal of identifying anomalies in driving patterns to the public, hints at a real world application for anomaly detection algorithms that generates value of some kind. In this case, the companies goal might have been to identify or count the times a person not insured for a particular car still drove said car. Identifying those instances might for instance allow challenging of fraudulent insurance claims. Another way AXA might profit from identifying anomalies in drives is, that having an estimate of the numbers of uninsured drives allows for adjustment of internal calculations of revenue, deductions and the like, as well as adjustment of insurance rates. If not one of the above, there has to be some kind of incentive for AXA to be able to identify anomalies. \\
@@ -224,17 +231,30 @@ In our case, however, the fact that more than 1,500 teams already submitted thei
 
 \subsection{Feature Extraction}
 \label{subsec:Metho-feature}
-In order to be able to find the anomalous driving trips for each driver contained in our dataset by applying the H2O deep learning auto-encoder, we have to extract features from our trips first. Ideally, those feature would be meaningful, with large variance in those driving trips that were generated by other drivers. We use Apache Flink in order to extract our features, as illustrated in Figure \ref{fig:approach-1}. Since every trip is initially given as a CSV file containing only $(x, y)$ coordinates of that trip (see section \ref{subsec:Metho-dataset}), we implement a feature extraction engine that calculates different features for each driving trip.\\
-Hence the dataset is not provided in the usual, file-only format contributions to the Apache Flink project are made. This was necessary to maintain the information given by the folder / file structure. The name of the folder is considered as the driver ID, the filename as trip ID. Furthermore a custom implementation of an Apache Flink conform \textit{InputFormat} has to be implemented. Simply reading the CSV files would destroy the context of the data. The result of the input pipeline are trips labeled by driver ID and trip ID containing a sequence of $(x, y)$ coordinates. Also important is to preserve the sequence of the $(x, y)$ tuples as the chronological order characterizes the route.\\
-The mined features include for instance driven distance, time of the trip, speed, acceleration, changes of heading. For speed and acceleration the mean, median, deviation of the mean of the drivers mean, standard deviation and maximum are added. The change of heading is used to determine the number of significant turns. This are turns bigger than 35\degree, 75\degree and 160\degree within a window of 10 seconds. Additionally a left turn is considered as a negative value, a right turn as a positive. The intention behind the counts is to characterise the drivers routes. Utilized by the delta speed of each entry in a trip, stops can be computed. This is where the speed is 0. Similar to the changes of heading the length of the stops are provided as further features. Stops longer than 1, 3, 10 and 120 seconds are counted. The shorter stops describe stop-and-go traffic. Traffic light stops are between 10 and 120 seconds. Longer stops can be considered as breaks.
-
 
 \begin{figure}
 \centering
-\includegraphics[trim=1cm 4cm 8cm 0.5cm, clip=true, width=1.2\linewidth]{"pics/approach1"}
+\includegraphics[trim=1cm 4cm 8cm 0.5cm, clip=true, width=\linewidth]{"pics/approach1"}
 \caption{Schematic visualization of our feature extraction}
 \label{fig:approach-1}
 \end{figure}
+
+In order to be able to find the anomalous driving trips for each driver contained in our dataset by applying the H2O deep learning auto-encoder, we have to extract features from our trips first. Ideally, those feature would be meaningful, with large variance in those driving trips that were generated by other drivers. We use Apache Flink in order to extract our features, as illustrated in Figure \ref{fig:approach-1}. Since every trip is initially given as a CSV file containing only $(x, y)$ coordinates of that trip (see section \ref{subsec:Metho-dataset}), we implement a feature extraction engine that calculates different features for each driving trip.\\
+Hence the dataset is not provided in the usual, file-only format contributions to the Apache Flink project are made. This was necessary to maintain the information given by the folder / file structure. The name of the folder is considered as the driver ID, the filename as trip ID. Furthermore a custom implementation of an Apache Flink conform \textit{InputFormat} has to be implemented. Simply reading the CSV files would destroy the context of the data. The result of the input pipeline are trips labeled by driver ID and trip ID containing a sequence of $(x, y)$ coordinates. Also important is to preserve the sequence of the $(x, y)$ tuples as the chronological order characterizes the route.\\
+The mined features include for instance driven distance (see formula (1)), time of the trip, speed (see formula (2)), acceleration (see formula (3)), changes of heading (see formula (4)). For speed and acceleration the mean, median, deviation of the mean of the drivers mean, standard deviation and maximum are added. The change of heading is used to determine the number of significant turns. This are turns bigger than 35\degree, 75\degree and 160\degree within a window of 10 seconds. Additionally a left turn is considered as a negative value, a right turn as a positive. The intention behind the counts is to characterise the drivers routes. Utilized by the delta speed of each entry in a trip, stops can be computed. This is where the speed is 0. Similar to the changes of heading the length of the stops are provided as further features. Stops longer than 1, 3, 10 and 120 seconds are counted. The shorter stops describe stop-and-go traffic. Traffic light stops are between 10 and 120 seconds. Longer stops can be considered as breaks.\\
+After extracting all the features, we obtain one feature vector for each trip of each driver. The outcome is materialized as CSV file where the rows represent a trip and the columns a feature. The feature vectors are ultimately pass to the auto-encoder as input vectors, are of fundamental meaning for the quality of the anomaly detection. Depending on their significance for a driver's fingerprint, the algorithm might perform well or it might produce unusable results in case the features do not bear a large significance for a driver's pattern of driving.
+
+\begin{align}
+\delta d_i &= \sqrt{(x_{i-1} - x_{i})^2 + (y_{i-1} - y_{i})^2} \\
+\delta v_i &= \frac{\delta d}{\delta t} \\
+\delta a_i &= \frac{\delta v_{i-1} - \delta v_{i}}{\delta t} \\
+\delta \alpha_i &= \arccos \frac{\vec{v_1} \cdot \vec{v_2}}{|\vec{v_1}|_2 * |\vec{v_2}|_2}
+\end{align}
+\begin{align*}
+\text{where:}\\
+v_1 =& p_{n-1} - p_{n} \\
+v_2 =& p_{n} - p_{n+1}\\
+\end{align*}
 
 
 %An overview of all the features we extract is given in the following list:
@@ -293,10 +313,8 @@ The mined features include for instance driven distance, time of the trip, speed
 %\item \label{itm:three} stops120Sec
 %\end{enumerate}
 
-After extracting all the features, we obtain one feature vector for each trip of each driver. The outcome is materialized as CSV file where the rows represent a trip and the columns a feature. The feature vectors are ultimately pass to the auto-encoder as input vectors, are of fundamental meaning for the quality of the anomaly detection. Depending on their significance for a driver's fingerprint, the algorithm might perform well or it might produce unusable results in case the features do not bear a large significance for a driver's pattern of driving. 
-
 \subsection{Exploratory Data Analysis}
-In order to get an overview of the data we are dealing with, we perform exploratory data analysis, mainly in the form of visualizations.  
+In order to get an overview of the data we are dealing with, we perform exploratory data analysis, mainly in the form of visualizations.
 
 \begin{figure*}
 \centering
@@ -304,7 +322,7 @@ In order to get an overview of the data we are dealing with, we perform explorat
 \caption{Plot of duration versis distance for each trip by each driver}
 \label{fig:duration-vs-distance}
 \end{figure*}
-Figure \ref{fig:duration-vs-distance} gives a overview of the dataset by displaying the duration and distance of every single trip for a few drivers. What we can see here already, is a rather large variance in trip duration among different drivers. Also, there seem to be cases where the driver did barely move, as well as very short trips (short in the sense of time passed during the trip).\\
+Figure \ref{fig:duration-vs-distance} gives a overview of the dataset by displaying the duration and distance of every single trip for a few drivers. What we can see here already, is a rather large variance in trip duration among different drivers. Also, there seem to be cases where the driver did barely move, as well as very short trips (short in the sense of time passed during the trip).
 
 \begin{figure}
 \centering
@@ -353,12 +371,25 @@ Considering the number of stops per driver and their respective driving trip is 
 \subsection{Experimental Approaches}
 \label{subsec:ExpPlan}
 
+\begin{figure}
+\centering
+\includegraphics[trim=0cm 26cm 9.5cm 0cm, clip=true, width=\linewidth]{"pics/experiment-plan"}
+\caption{Experiment plan}
+\label{fig:Exp-plan}
+\end{figure}
+
+The common approach in data analysis and machine learning for classification is to do k-fold cross-validation method to find the optimal hyper-parameter. This parameter set minimizes the error of the prediction. For this the data set is at least divided into to random splats, usually 70/30, for training and testing respectively. After fitting the model with the training dataset, predications on the test data set are made. By comparing the predicted result and the true labels the error is calculated. This error represents the quality of the algorithm.\\
+In a unsupervised learning environment such a optimization strategy is not possible, due to the absence of lables for the dataset. One measurement is the reconstruction error for anomaly detection by dimensionality reduction. For the scope of our problem statement we luckily can use the evaluation of the predicted result on Kaggle.com. The strategy for this is described in section \ref{subsec:eval-result}. The score on Kaggle.com represents the accuracy of our model. As a second method towards quality evaluation a visual approach was chosen. The trips with the $n$ biggest reconstruction error are filtered from the original data set. In a second step the $m$ biggest outliers of each driver found in step one is collected. This method provides a decent amount of result for visual evaluation. Utilized by python and matplot-lib the trips and outliers are plotted. For our experiments we filter 15 trips with the biggest reconstruction error and highlight the first 5 outliers for each unique driver among the filtered trips. \\
+
+For a structured approach for finding the optimal application of the deep learner auto-encoder on the AXA Driver Telematics datast and the corresponding hyper-parameter a plan to run the experiments is set up. A simplification of the plan can be seen in figure \ref{fig:Exp-plan}. To cover the question, whether the anomalies can only be found among the trips of one driver or even in more general global context the model is build in two different ways. The idea behind this approach is, that a model build on the entire dataset is to generalized in respect of local outliers. The second approach aims to overcome this generalization the assemble of trips of one driver build the trainings set for the deep learner auto-encoder.\\
+A similar method is applied for the calculation of the outlier probability of each trip. A more detailed description of the computations can be found in section \ref{subsec:sparkling-impl}. The determination of the probability is considered in a local and global context.
+
 \subsection{Sparkling Implementation}
 \label{subsec:sparkling-impl}
 
 \begin{figure}
 \centering
-\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=1.2\linewidth]{"pics/approach2"}
+\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=\linewidth]{"pics/approach2"}
 \caption{Schematic visualization of our experiment(s)}
 \label{fig:approach-2}
 \end{figure}
@@ -366,7 +397,7 @@ Considering the number of stops per driver and their respective driving trip is 
 As stated in section \ref{subsec:Metho-h2o} the scalable machine learning library of H2O.ai builds the core of the experimental implementation. H2O.ai provides a comprehensive API named Sparkling Water for interfacing the H2O cloud. This API is written in Java and Scala and is usually embedded in a data flow of an Apache Spark application. \\
 In the following the implemented data flow and data transformation are explained. The first step is to load the input data from the HDFS on the cluster. A regular Apache Spark RDD is used as container. The first transformation is to convert the line-wise input string to representative Plain Old Java Objects (POJOs). The POJOs are stored in the Apache Spark context on the nodes of the cluster. This is a very common step within scalable data analysis.\\
 Within the next step towards the outlier-detection the RDD containing the input data is transformed to an Apache Spark DataFrame. A DataFrame is the representation of a rational database table in Spark SQL and stored in its SQL-context. Apache Spark aims for structured data processing and acts as distributed SQL-engine. To transform the data, the schema of the table is to be set and alongside the DataFrame registered in the SQL-context. Once this is done, a SQL query can be used to obtain the data in the format of an H2OFrame. A H2OFrame is, analogue to the DataFrame, the representation of data sets within the H2O-context. For the experiments all features for every trip were fetched as training data.\\
-Once the training data are in the right format the model for the deep learning auto-encoder is set up and parameterized. This is done by initiating an instance of the \textbf{DeepLearning} class of the Sparkling Water API. The parameters for experiment 1 and experiment 2 are shown in table \ref{table:param-set-exp1} and table \ref{table:param-set-exp2} respectively.
+Once the training data are in the right format the model for the deep learning auto-encoder is set up and parameterized. This is done by initiating an instance of the \textbf{DeepLearning} class of the Sparkling Water API. The parameters for experiment 1 and experiment 2 are shown in table \ref{table:param-set-exp1} and table \ref{table:param-set-exp2} respectively. This parameter set is chosen according the the evaluation results given by Kaggle.com. As the model fitting takes place in a unsupervised environment the response column will be ignored and for that reason set to any non static column. Tangens hyperbolicus provides a bounded activation function for the output forwarding to the next neuron. Its a simple activation function and the symmetry around 0 makes the algorithm converge faster. The number of hidden layers is set to 1 layer with 8 neuron. The number of neurons on the hidden layer is determined by applying the PCA on the dataset and find number of principal components that have a significant impact on the reconstruction error. This can be done by observing the standard deviation of the principal components.
 
 \begin{table}
 \centering
@@ -376,7 +407,7 @@ training data        & all available trips (2736 x 200) \\
 response column      & any non static column \\
 autoencoder          & true \\
 activation function  & tanh \\
-hidden layers        & \{ 15 \}\\
+hidden layers        & \{ 8 \}\\
 epochs               & 3\\
 L2-normalization     & 0.01
 \end{tabular}
@@ -392,7 +423,7 @@ training data        & all trips of current driver (200) \\
 response column      & any non static column \\
 autoencoder          & true \\
 activation function  & tanh \\
-hidden layers        & \{ 15 \}\\
+hidden layers        & \{ 8 \}\\
 epochs               & 3\\
 L2-normalization     & 0.2
 \end{tabular}
@@ -401,7 +432,8 @@ L2-normalization     & 0.2
 \end{table}
 
 For the prediction the model provides an interface called \textit{scoreAutoEncoder(..)}, which takes the test data as parameter. As stated in section \ref{subsec:Metho-h2o} in our case the test dataset is equivalent to the training dataset. The result of the prediction is a vector containing the reconstruction error of the features for every trip. As the vectors of H2OFrames are immutable the resulting reconstruction errors can be joined to the test dataset row by row. This is simply done by adding the error as additional column to the input data set. Furthermore the columns of the features are deleted as they are not relevant for further evaluations. \\
-In the final step the H2OFrame is transformed back into the Spark RDD representation. Back in the Spark context,  a simple map operation is used to  normalize the reconstruction error by using formula (1).
+In the final step the H2OFrame is transformed back into the Spark RDD representation. Back in the Spark context,  a simple map operation is used to  normalize the reconstruction error by using formula (5).
+
 \begin{align}
 \hat{x_i} = \frac{x_i - min(X)}{max(X) - min(X)}
 \end{align}
