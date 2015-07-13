@@ -9,8 +9,8 @@
 \usepackage{subcaption}
 \usepackage{lipsum}
 \usepackage{gensymb}
-\begin{document}
 
+\begin{document}
 % ****************** TITLE ****************************************
 
 %\title{A Sample {\ttlit Proceedings of the VLDB Endowment} Paper in LaTeX
@@ -70,6 +70,7 @@ In this work, we investigate the performance of a specific algorithm from the fa
 	%(Conclusion based on experiments and results of the experiments, structure of dataset, feature extraction)
 %8. References
 
+
 \section{Introduction}
 \label{sec:Introduction}
 
@@ -82,25 +83,23 @@ In this work, we investigate the performance of a specific algorithm from the fa
 
 \textit{Anomaly detection} (commonly referred to as \textit{outlier detection}) is one of a few very common tasks in the field of Machine Learning. The goal of algorithms designed for the purpose of anomaly detection are concerned with finding data in a dataset that does not conform to a pattern. That means, the goal is to identify data points, that are special in regards to their behavior, compared to the data points in the dataset, that are considered "normal". \cite{survey:anomaly-detection} These data points are called outliers, because they show different behavior than one would expect. Figure \ref{fig:outlier-basic} shows a basic plot containing data points, with two different populations, along with two outliers, that do not seem to fit either pattern.\\
 The value of identifying outliers in a dataset lies in the action one can take after detecting them. Common applications of anomaly detection algorithms include among others health care and fraud detection. In the former, those algorithms can for instance help identifying sick patients, by identifying anomalous vital signs compared in a group of similar patients. In the latter application, those algorithms can account for fast, actionable information in case of credit card fraud, which can be identified by anomalous purchases, given the owners purchase pattern in form of historical purchases. \\
-Anomaly detection can happen in a supervised, semi-supervised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection and the challenges we face in its context.
+Anomaly detection can happen in a supervised, semi-super\-vised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection and the challenges we face in its context.
 
-%Difference to binary classification? -> Only data of one class given
-%simple plot
-%\subsection{Supervised Learning}
+
 
 \subsection{Challenges of Unsupervised Anomaly Detection}
 \label{subsec:Intro-challenges}
 
 \begin{figure}
-\begin{subfigure}{.5 \textwidth}
+\begin{subfigure}{\linewidth}
 	\centering
-	\includegraphics[width=\linewidth]{"pics/ekg"}
+	\includegraphics[width=.8\linewidth]{"pics/ekg"}
 	\caption{Obvious outlier in small sample size ...}
 	\label{subfig:context-a}
 \end{subfigure}
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}{\linewidth}
   \centering
-  \includegraphics[width=.9\linewidth]{"pics/ekg2"}
+  \includegraphics[width=.8\linewidth]{"pics/ekg2"}
   \caption{... are not necessarily outliers in the context of the whole dataset}
   \label{subfig:context-b}
 \end{subfigure}
@@ -129,13 +128,16 @@ A schematic diagram of an auto-encoder taken from \cite{article:astronomy} is gi
 
 %Schematic diagram of an autoencoder. The three input values are encoded to two feature variables. Pre-training (described in Section 3.3) defines the weight matrices W1 and W2.
 
+
 \section{Problem Statement} \label{problem_statement}
 %with Target and Scope
 %The \textit{proceedings} are the records of a conference.
 As already mentioned in \textbf{\ref{sec:Introduction}. \nameref{sec:Introduction}}, anomaly detection refers to the task of identifying observations, that do not match the general pattern of the data set they arise in. Oftentimes anomaly detection happens in an unsupervised context, which means that the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. This is also the case we want to investigate regarding the usability of a certain algorithm originally designed for a different purpose. Within the scope of this project, we analyze the performance of a particular algorithm more commonly used in a field different to the one of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a deep learning auto-encoder} (see section \ref{subsec:Intro-deep}) \textbf{well suited for anomaly detection in an unlabeled dataset?}
 
+
 \subsection{Target}\label{target}
 As stated above, target of this project is to evaluate the quality of a deep learning auto-encoder model for the task of identifying anomalies in an unsupervised context. Experiments comparing the performance of the deep learning auto-encoder with the performance of other algorithms in the same context shall indicate whether it is a good idea to use the auto-encoder in the context of unsupervised anomaly detection or not.
+
 
 \subsection{Scope}\label{ssec:scope}
 This project consists of various different steps in order to obtain an answer to the problem specified above.
@@ -147,6 +149,7 @@ These steps can be outlined as follows:
 	\item Draw conclusions about the general suitability of the algorithm based on the results produced by the application of its implementation compared to those of other algorithms
 \end{enumerate}
 
+
 \section{Methodology}
 Within the scope of this project, we use H2O.ai's (see section \ref{subsec:Metho-h2o}) implementation of the deep learning auto-encoder model through its Sparkling Water API on top of Apache Spark. The dataset we use in order to be able to compare our results to those of our peers using different algorithms is the AXA Driver Telematics Analysis dataset (see \ref{subsec:Metho-dataset}), which contains multiple trips by multiple drivers.
 
@@ -156,23 +159,24 @@ Within the scope of this project, we use H2O.ai's (see section \ref{subsec:Metho
 % Apply implementation of said algorithm on dataset that has been worked on by x-thousand people
 % description dataset
 
+
 \subsection{H2O.ai  and H2O Deep Learning}
 \label{subsec:Metho-h2o}
 
 \begin{figure}
-\begin{subfigure}{.5 \textwidth}
+\begin{subfigure}{\linewidth}
 	\centering
 	\includegraphics[width=\linewidth]{"pics/outlier_basic"}
 	\caption{The given unlabeled dataset...}
 	\label{subfig:reduction-a}
 \end{subfigure}
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}{\linewidth}
   \centering
   \includegraphics[width=.76\linewidth]{"pics/reduced-rep"}
   \caption{...is reduced in dimensionality...}
   \label{subfig:reduction-b}
 \end{subfigure}
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}{\linewidth}
   \centering
   \includegraphics[width=.9\linewidth]{"pics/reconstruction"}
   \caption{...and reconstructed, in order to find outliers}
@@ -187,7 +191,7 @@ H2O by H2O.ai is an open source software project primarily used for fast scalabl
 H2O is shipped with its own distirbuted in-memory data store which is integrated as an key-value store on top of non-blocking hash maps. The basic type for data sets in H2O is the H2OFrame. An H2OFrame consits of vectors, where each vector represents one row, respectivle one feature. As opposed to the H2OFrame, the vectors are immutable. The access to the data is granted by an R evaluation layer. This layer also builds the bridge to the REST interface. For the computation part the base is build by basic operations as fork, join and map reduce tasks. These are used by the H2O prediction engine. All algorithm, either provided by H2O or custom implementations, use that engine to build their individual model. The data storage and data analysis takes palace in the so called H2O cloud which runs on one or more nodes. For each node a Java Virtual Machine is instanciated and perform the above described operations. The H2O context is accessable through network by interfaces for Python, R, Java, Scala, Tabelau/Excel or the H2O WebUI. \\
 
 Besides Distributed Random Forests, K-means, Generalized Linear Model and Gradient Boosting Machine, H2O also offers readily available deep learning algorithms, which includes the auto-encoder. \\
-As mentioned in Section \ref{subsec:Intro-deep}, the deep learning auto-encoder is an algorithm that is used primarily for dimensionality reduction. The way we want to use the auto-encoder to detect outliers in an unsupervised manner is shown in figure \ref{fig:auto-encoder-reconstruction}. As it can be seen there, the algorithm is forced to learn the identity through a non-linear, reduced representation of original data. This is done by first reducing the data's dimensionality and then reconstructing it from that reduced representation. Since one assumption in unsupervised anomaly detection is that the number of normal data points exceeds the number of anomalous ones by far (see section \ref{subsec:Intro-challenges}), that learned model will be mostly influenced more by what is normal in the data than by what is anomalous. Thus, attempting to reconstruct a data point from its reduced representation will have a greater error than anomalous data points that it will have for normal data points.\\
+As mentioned in section \ref{subsec:Intro-deep}, the deep learning auto-encoder is an algorithm that is used primarily for dimensionality reduction. The way we want to use the auto-encoder to detect outliers in an unsupervised manner is shown in figure \ref{fig:auto-encoder-reconstruction}. As it can be seen there, the algorithm is forced to learn the identity through a non-linear, reduced representation of original data. This is done by first reducing the data's dimensionality and then reconstructing it from that reduced representation. Since one assumption in unsupervised anomaly detection is that the number of normal data points exceeds the number of anomalous ones by far (see section \ref{subsec:Intro-challenges}), that learned model will be mostly influenced more by what is normal in the data than by what is anomalous. Thus, attempting to reconstruct a data point from its reduced representation will have a greater error than anomalous data points that it will have for normal data points.\\
 The H2O version of its deep learning auto-encoder is based on simple map reduce tasks as of that is a fast an memory efficient implementation. It profits from an multi-threaded implementation that allows a distributed parallel computation for deployment on a multi-node cluster. The algorithm uses stochastic gradient descent for the problem of minimizing the loss function. It provides regularisation including L1, L2, dropout and Hogwild!. Also the activation and loss function can be parametrized by the user.
 
 
@@ -204,7 +208,7 @@ The H2O version of its deep learning auto-encoder is based on simple map reduce 
 The AXA Driver Telematics dataset is a dataset that was being released to the public in form of a Kaggle challenge 
 \footnote{Find the challenge with the dataset here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}}
 The dataset is a directory based dataset. This means meta data is implicitly contained in the directory and file structure of the dataset. In total there are logs for 2736 drivers. There is one designated folder for each driver, each of which contains 200 different trips in form of CSV files. In the raw data, a single trip is given by a single CSV file consisting of two columns and a varying number of rows. For every single drive, there is one column containing x coordinates one column containing y coordinates. Each row then represents the driver's position one second after the previous row. Every trip has been anonymized, such that each trip starts at position $(x, y) = (0, 0)$ and all the following coordinates have been randomly rotated.\\ 
-For instance, the first few rows in the CSV file representing driver one's first trip are shown in Table \ref{table:raw-trace}
+For instance, the first few rows in the CSV file representing driver one's first trip are shown in table \ref{table:raw-trace}
 
 \begin{table}
 \centering
@@ -228,6 +232,7 @@ Figure \ref{fig:axa-trip} (taken from \href{https://www.kaggle.com/c/axa-driver-
 With a size of 1.44 GB compressed and 5.92 GB in extracted state, this dataset can be considered reasonably large and thus, processing the dataset on a parallel system is justified. \\
 The fact, that AXA, a major car insurance provider (amongst other things), releases a dataset of this kind with the goal of identifying anomalies in driving patterns to the public, hints at a real world application for anomaly detection algorithms that generates value of some kind. In this case, the companies goal might have been to identify or count the times a person not insured for a particular car still drove said car. Identifying those instances might for instance allow challenging of fraudulent insurance claims. Another way AXA might profit from identifying anomalies in drives is, that having an estimate of the numbers of uninsured drives allows for adjustment of internal calculations of revenue, deductions and the like, as well as adjustment of insurance rates. If not one of the above, there has to be some kind of incentive for AXA to be able to identify anomalies. \\
 In our case, however, the fact that more than 1,500 teams already submitted their solutions, allows for some benchmarking of the deep learning auto-encoder.
+
 
 \subsection{Feature Extraction}
 \label{subsec:Metho-feature}
@@ -257,62 +262,6 @@ v_2 =& p_{n} - p_{n+1}\\
 \end{align*}
 
 
-%An overview of all the features we extract is given in the following list:
-%\begin{enumerate}
-%\label{enum:all-features}
-%\item \label{itm:one} driverId\\
-%The unique identifier of the driver this trip belongs to
-%\item \label{itm:two} driveId\\
-%The among one driver unique identifier of a drive
-%\item \label{itm:three} duration\\
-%Duration of the trip.
-%\item \label{itm:four} distance\\
-%Distance driven in this trip.
-%\begin{comment}
-%The distance driven during the trip. Approximated like this $\sum_{i=2}^n{\lVert \begin{bmatrix}
-%		  x_i\\
-%		 y_i
-%	\end{bmatrix}  
-%	-
-%	\begin{bmatrix}
-%	x_{i - 1}\\
-%	y_{i - 1}
-%	\end{bmatrix}
-%	\rVert}$
-%\end{comment}
-%\item \label{itm:five} speedMax\\
-%Maximum speed for this trip.
-%\item \label{itm:six} speedMedian\\
-%Median speed for this trip.
-%\item \label{itm:seven} speedMean
-%\item \label{itm:eight} speedMeanDeviation
-%\item \label{itm:nine} speedSd
-%\item \label{itm:ten} speedMeanDriver (*1)
-%\item \label{itm:eleven} speedSdDriver (*1)
-%\item \label{itm:twelve} accMax
-%\item \label{itm:thirteen} accMedian
-%\item \label{itm:fourteen} accMean
-%\item \label{itm:fifteen} accMeanDeviation
-%\item \label{itm:sixteen} accSd
-%\item \label{itm:seventeen} accMeanDriver (*1)
-%\item \label{itm:eighteen} accSdDriver (*1)
-%\item \label{itm:nineteen} angleMedian
-%\item \label{itm:twenty} angleMean
-%\item \label{itm:twenty-one} turns35P (*2)
-%\item \label{itm:twenty-two} turns35N (*2)
-%\item \label{itm:twenty-three} turns70P (*2)
-%\item \label{itm:twenty-four} turns70N (*2)
-%\item \label{itm:twenty-five} turns160P (*2)
-%\item \label{itm:twenty-six} turns160N (*2)
-%\item \label{itm:twenty-seven} turnsBiggerMean (*2)
-%\item \label{itm:twenty-eight} turnsU (*2)
-%\item \label{itm:twenty-nine} stopDriveRatio
-%\item \label{itm:thirty} stops1Sec
-%\item \label{itm:three}stops3Sec
-%\item \label{itm:two} stops10Sec
-%\item \label{itm:three} stops120Sec
-%\end{enumerate}
-
 \subsection{Exploratory Data Analysis}
 In order to get an overview of the data we are dealing with, we perform exploratory data analysis, mainly in the form of visualizations.
 
@@ -341,14 +290,6 @@ Using the above mentioned features we extracted, exploratory data analysis yield
 \end{figure}
 The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only the variation of driving distance among drivers, but also between different trips for one driver.  In particular, this box plot seems to confirm the assumptions made about driver 18's driving pattern after having seen the plot of all that driver's trip in Figure \ref{fig:driver-18}. That is, because we can clearly see in the box plot , that driver 18 has a very low variation when it comes to trip length. 
 
-%\begin{figure}
-%\centering
-%\includegraphics[width=\linewidth]{"pics/box-plot-duration"}%width=\textwidth
-%\caption{box-plot-duration}
-%\label{fig:box-plot-duration}
-%\end{figure}
-%In Figure \ref{fig:box-plot-duration} we can see the drivers with their respective driving duration in seconds. One insight we gain from this plot is, that there seem to be quite a lot of trips with a very low recording time. Looking at the data points lying under the lower quartile bound, we can see, that for some drivers, the duration of the recorded trip is lower than 300 seconds in 25\% of the cases (Driver 1, 18). We can also see, that some drivers tend to go on short drives in most cases. Drivers 11, 16 and 18 for instance seem to be going on drives with a duration of 10 or less minutes 75\% of the time.
-
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{"pics/number-of-breaks-10-120"}%width=\textwidth
@@ -356,13 +297,6 @@ The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only t
 \label{fig:number-of-breaks-10-120}
 \end{figure}
 Considering the number of stops per driver and their respective driving trip is also helpful in detecting driving patterns. In Figure \ref{fig:number-of-breaks-10-120}, size and color of the circle visualize the number of stops between 10 seconds and 120 seconds. The insights we gain from this plot can be the revealing of the area the respective driver commonly drives in. A constant high number of short breaks might indicate a driver mainly driving in urban areas. In this case, trips with more infrequent, shorter stops could be considered anomalous because the might originate from a rural driver.
-
-%\begin{figure}
-%\centering
-%\includegraphics[width=\linewidth]{"pics/box-plot-mean-speed"}%width=\textwidth
-%\caption{box-plot-mean-speed}
-%\label{fig:box-plot-mean-speed}
-%\end{figure}
 
 
 \section{Experiments}
@@ -378,11 +312,9 @@ Considering the number of stops per driver and their respective driving trip is 
 \label{fig:Exp-plan}
 \end{figure}
 
-The common approach in data analysis and machine learning for classification is to do k-fold cross-validation method to find the optimal hyper-parameter. This parameter set minimizes the error of the prediction. For this the data set is at least divided into to random splats, usually 70/30, for training and testing respectively. After fitting the model with the training dataset, predications on the test data set are made. By comparing the predicted result and the true labels the error is calculated. This error represents the quality of the algorithm.\\
-In a unsupervised learning environment such a optimization strategy is not possible, due to the absence of lables for the dataset. One measurement is the reconstruction error for anomaly detection by dimensionality reduction. For the scope of our problem statement we luckily can use the evaluation of the predicted result on Kaggle.com. The strategy for this is described in section \ref{subsec:eval-result}. The score on Kaggle.com represents the accuracy of our model. As a second method towards quality evaluation a visual approach was chosen. The trips with the $n$ biggest reconstruction error are filtered from the original data set. In a second step the $m$ biggest outliers of each driver found in step one is collected. This method provides a decent amount of result for visual evaluation. Utilized by python and matplot-lib the trips and outliers are plotted. For our experiments we filter 15 trips with the biggest reconstruction error and highlight the first 5 outliers for each unique driver among the filtered trips. \\
-
 For a structured approach for finding the optimal application of the deep learner auto-encoder on the AXA Driver Telematics datast and the corresponding hyper-parameter a plan to run the experiments is set up. A simplification of the plan can be seen in figure \ref{fig:Exp-plan}. To cover the question, whether the anomalies can only be found among the trips of one driver or even in more general global context the model is build in two different ways. The idea behind this approach is, that a model build on the entire dataset is to generalized in respect of local outliers. The second approach aims to overcome this generalization the assemble of trips of one driver build the trainings set for the deep learner auto-encoder.\\
 A similar method is applied for the calculation of the outlier probability of each trip. A more detailed description of the computations can be found in section \ref{subsec:sparkling-impl}. The determination of the probability is considered in a local and global context.
+
 
 \subsection{Sparkling Implementation}
 \label{subsec:sparkling-impl}
@@ -439,10 +371,13 @@ In the final step the H2OFrame is transformed back into the Spark RDD representa
 \end{align}
 After normalizing, the Spark API is used to print the the output to a text file. The resulting text file is in the Kaggle format, consisting of 547200 rows containing the probabilities for each driver and trip. In addition to the output for Kaggle a second file is created containing the raw reconstruction error instead of the probability.
 
+
 \subsection{Evaluation of the Result}
 \label{subsec:eval-result}
-In order to be able to obtain indications as to whether the deep learning auto-encoder is suitable for anomaly detection, we have to somehow evaluate its findings. Since our dataset is of unlabeled nature, we do not have any labels to test and evaluate the deep learning model on. As stated in section \ref{subsec:Metho-dataset}, the dataset was the subject of a Kaggle.com challenge. Our prediction of outliers will automatically be graded after uploading it to this site. The website will give us the accuracy of our predication as value of the area under the ROC curve. 
-The Kaggle submissions format is outlined in Table \ref{table:kaggle-submission}. Every row represents a trip, labeled by driver ID and trip ID, along with a probability whether said trip actually belongs to the driver or not. Value 1 indicates the highest probability, 0 the lowest.
+In order to be able to obtain indications as to whether the deep learning auto-encoder is suitable for anomaly detection, we have to somehow evaluate its findings. The common approach in data analysis and machine learning for classification is to do k-fold cross-validation method to find the optimal hyper-parameter. This parameter set minimizes the error of the prediction. For this the data set is at least divided into to random splats, usually 70/30, for training and testing respectively. After fitting the model with the training dataset, predications on the test data set are made. By comparing the predicted result and the true labels the error is calculated. This error represents the quality of the model.\\
+In a unsupervised learning environment such a optimization strategy is not possible, due to the absence of labels for the dataset. One measurement is the reconstruction error for anomaly detection by dimensionality reduction. As stated in section \ref{subsec:Metho-dataset}, the dataset was the subject of a Kaggle.com challenge.For the scope of our problem statement we luckily can use the evaluation of the prediction on the website.  Our prediction of outliers will automatically be graded after uploading it. The website will give us the accuracy of our predication as value of the area under the ROC curve. The Kaggle submissions format is outlined in table \ref{table:kaggle-submission}. Every row represents a trip, labeled by driver ID and trip ID, along with a probability whether said trip actually belongs to the driver or not. Value 1 indicates the highest probability, 0 the lowest. \\
+As a second method towards quality evaluation a visual approach was chosen. The trips with the $n$ biggest reconstruction error are filtered from the original data set. In a second step the $m$ biggest outliers of each driver found in step one is collected. This method provides a decent amount of result for visual evaluation. Utilized by python and matplot-lib the trips and outliers are plotted. For our experiments we filter 15 trips with the biggest reconstruction error and highlight the first 5 outliers for each unique driver among the filtered trips. \\
+ 
 \begin{table}
 \centering
 \begin{tabular}{l c}
@@ -462,44 +397,64 @@ driver\_trip, & prob\\
 \section{Results}
 \label{sec:Results}
 
+
 \subsection{Kaggle Results}
-[Write something about obtained Kaggle results here]
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/kaggle-result"}
+\caption{Scoring on Kaggle.com's leaderboard}
+\label{fig:kaggle-result}
+\end{figure}
+
+As stated in section \ref{subsec:eval-result} uploaded predications are evaluated on Kaggle.com. Unfortunately the highest achieved ROC score was 0.53014. This score is only slightly better than random guessing or marking every trip with the highest probability. This result is invariant towards changes in normalisation, activation function, loss function as well as the methodology of building the deep learner auto-encoder model. Also the different approaches for computation of the probability does not significantly change the score. Explanations for this result are among others :
+\begin{itemize}
+\item Badly chosen features for unsupervised learning
+\item Lack of cross-validation for optimizing the hyper-pa\-ra\-me\-ter
+\end{itemize}
+Driven by our motivation and the results of applying H2O's deep learner on the MNIST dataset of handwritten digits manual investigation are to be done. 
+
 
 \subsection{Qualitative Evaluation}
+
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{"pics/outliers_junk/1634_with_136"}
-\caption{All drives of driver 1634 including junk drive}
-\label{fig:junk-drive}
+\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_3506"}
+\caption{All trips of driver 3506. Trips with the highest reconstruction error are marked in red}
+\label{fig:d-3506}
+\end{figure}
+
+For the qualitative evaluation the 15 trips with the highest reconstruction errors are filtered from the original data set. For each unique driver out of the filtered data all trips are plotted. The 5 trips with the highest reconstruction error are marked red. \\
+This way of evaluation showed a different result then the quantitative scoring from Kaggle.com. In figure \ref{fig:d-1634-junk} it can be clearly seen that a very outlying trip is marked red. Removing this outlier as illustrated in figure \ref{fig:d-1634} shows remaining trips of this driver. The same pattern can be seen in figure \ref{fig:d-1635-junk} and figure \ref{fig:d-1635}. The unexpected looking straight lines can clearly be classified as outliers in an objective point of view. This trips are clearly not more than junk data resulting from poor GPS recordings. Only jumps in locations are recorded, even outside of the boundary of a usual trip distance as figure \ref{fig:d-1634-junk} shows in a clear manner. The result of the qualitative evaluation is that, the the model was successfully trained to find outliers. The computation of the prediction, based on the reconstruction error, causes the bad result on Kaggle.com. Observing formula (5) shows, that if the maximum of the reconstruction error is far of the other values the scale of the probability is not equally distributed between 0 and 1. This can also be seen by analysing the files, uploaded on Kaggle.com.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1634_with_136"}
+\caption{All trips of driver 1634 including junk drive}
+\label{fig:d-1634-junk}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{"pics/outliers_junk/D_1634_wo_136"}
-\caption{Plot including junk drive}
-\label{fig:junk-drive}
+\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1634_wo_136"}
+\caption{Trips of driver 1634 without junk drive}
+\label{fig:d-1634}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{"pics/outliers_junk/D_1080_unclean"}
-\caption{Plot including junk drive}
-\label{fig:junk-drive}
+\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1635_unclean"}
+\caption{All trips of driver 1635 including junk drive}
+\label{fig:d-1635-junk}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{"pics/outliers_junk/D_1080_clean"}
-\caption{Plot including junk drive}
-\label{fig:junk-drive}
+\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1080_clean"} %TODO
+\caption{Trips of driver 1635 without junk drive}
+\label{fig:d-1635}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=\linewidth]{"pics/outliers_junk/D_3506"}
-\caption{All drives of driver 3506. Drives with the highest reconstruction error are marked in red}
-\label{fig:driver_3506}
-\end{figure}
 
 \section{Conclusion}
 \label{sec:Conclusion}
@@ -526,7 +481,7 @@ As outlined in...
 %The main objective of this project is to evaluate the suitability of a Deep Learning Auto-Encoder model %for identifying anomalies. 
 %\subsection{Methodology, Objectives and Experiments}\label{planned_methodology}
 
-I%n this project, we use \textit{H2O.ai}'s\footnote{An open source parallel processing engine for machine learning} implementation of the Deep Learning Auto-Encoder model through its Scala API on top of Apache spark. The dataset we use in order to being able to compare our results to those of our peers is the \textit{AXA Driver Telematics Analysis} dataset\footnote{This dataset was released to the public as a competition on \url{https://www.kaggle.com/}. It can be found here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data?drivers.zip}}, which contains multiple vehicle traces by multiple drivers. The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
+%In this project, we use \textit{H2O.ai}'s\footnote{An open source parallel processing engine for machine learning} implementation of the Deep Learning Auto-Encoder model through its Scala API on top of Apache spark. The dataset we use in order to being able to compare our results to those of our peers is the \textit{AXA Driver Telematics Analysis} dataset\footnote{This dataset was released to the public as a competition on \url{https://www.kaggle.com/}. It can be found here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data?drivers.zip}}, which contains multiple vehicle traces by multiple drivers. The catch with this dataset is that while there is a folder for each driver with a number of his or her respective traces, there is always a varying and unknown number of traces that were being generated by other drivers in that particular folder as well. \\
 %Since this dataset does not contain labels for the data, uploading our results to Kaggle, allows us to obtain a performance evaluation and being able to compare our results to other people's results, yielded from other algorithms. 
 	
 
@@ -552,8 +507,6 @@ I%n this project, we use \textit{H2O.ai}'s\footnote{An open source parallel proc
 % ****************** APPENDIX **************************************
 % Example of an appendix; typically would start on a new page
 %pagebreak
-
-
 
 
 \end{document}
