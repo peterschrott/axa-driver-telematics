@@ -185,20 +185,20 @@ Since the H2O deep learning auto-encoder returns confidence scores for each data
 \label{subsec:Metho-dataset}
 The AXA Driver Telematics dataset is a dataset that was being released to the public in form of a Kaggle challenge 
 \footnote{Find the challenge with the dataset here: \url{https://www.kaggle.com/c/axa-driver-telematics-analysis/data}}
-The dataset is a directory based dataset. This means meta data is implicitly contained in the directory and file structure of the dataset. In total there are logs for 2736 drivers. There is one designated folder for each driver, each of which contains 200 different drive traces in form of CSV files. In the raw data, a single drive is given by a single CSV file consisting of three columns and a varying number of rows. For every single drive, there is one column containing x coordinates one column containing y coordinates and one column containing the driver ID. Each row then represents the driver's position one second after the previous row. Every drive has been anonymized, such that each drive starts at position $(x, y) = (0, 0)$ and all the following coordinates have been randomly rotated.\\ 
+The dataset is a directory based dataset. This means meta data is implicitly contained in the directory and file structure of the dataset. In total there are logs for 2736 drivers. There is one designated folder for each driver, each of which contains 200 different drive traces in form of CSV files. In the raw data, a single drive is given by a single CSV file consisting of two columns and a varying number of rows. For every single drive, there is one column containing x coordinates one column containing y coordinates. Each row then represents the driver's position one second after the previous row. Every drive has been anonymized, such that each drive starts at position $(x, y) = (0, 0)$ and all the following coordinates have been randomly rotated.\\ 
 For instance, the first few rows in the CSV file representing driver one's first trip are shown in Table \ref{table:raw-trace}
 
 \begin{table}
 \centering
 \begin{tabular}{l c r}
-x & y & DriverID \\
-0 & 0 & 1\\
-18.6 & -11.1& 1 \\
-36.1 & -21.9 & 1 \\
-53.7 & -32.6 & 1 \\
-. & . & . \\
-. & . & . \\
-. & . & . \\	
+x & y\\
+0 & 0\\
+18.6 & -11.1 \\
+36.1 & -21.9 \\
+53.7 & -32.6 \\
+. & .  \\
+. & . \\
+. & . \\	
 \end{tabular}
 \caption{The first few rows of the driver one's first drive}
 \label{table:raw-trace}
@@ -341,22 +341,41 @@ Considering the number of stops per driver and their respective driving trip is 
 
 \section{Experiments}
 \label{sec:Experiments}
-In order to be able to obtain indications as to whether the deep learning auto-encoder is suitable for anomaly detection, we have to somehow evaluate its findings. Since our dataset is of unlabeled nature, we do not have any labels. As stated in Section \ref{subsec:Metho-dataset} though, the dataset was the subject of a Kaggle.com challenge. Hence, our prediction of outliers will automatically be graded after uploading it to the site, which will in turn give us the accuracy of our predictions.\\
-Figure \ref{insert figure label} outlines the scope of our first experiment, that aims at getting indications as to whether a deep-learning auto-encoder is suitable for unsupervised anomaly detection.
+In order to be able to obtain indications as to whether the deep learning auto-encoder is suitable for anomaly detection, we have to somehow evaluate its findings. Since our dataset is of unlabeled nature, we do not have any labels. As stated in Section \ref{subsec:Metho-dataset} though, the dataset was the subject of a Kaggle.com challenge. Hence, our prediction of outliers will automatically be graded after uploading it to the site, which will in turn give us the accuracy of our predictions. The submission form for Kaggle submissions are outlined in Table \ref{table:kaggle-submission}. Here, every row represents a driver's trip along with a prediction whether said drive actually belongs to the driver (indicated by value 1) or whether it does not and is predicted to be an outlier (indicated by value 1).
+\begin{table}
+\centering
+\begin{tabular}{l c}
+driver\_trip & prob\\
+1\_1,& 1\\
+1\_1,& 1\\
+1\_1,& 1\\
+1\_1,& 0\\
+1\_1,& 1\\
+. & . \\
+. & . \\
+\end{tabular}
+\caption{Submission format for Kaggle.com}
+\label{table:kaggle-submission}
+\end{table}
+Based on the submission, the system calculates an Area under the Curve score 
 
 \begin{figure}
 \centering
-\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=1.2\linewidth]{"pics/approach2"}%width=\textwidth
+\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=1.2\linewidth]{"pics/approach2"}
 \caption{Schematic visualization of our experiment(s)}
 \label{fig:approach-2}
 \end{figure}
+Figure \ref{insert figure label} outlines the scope of our first experiment, that aims at getting indications as to whether a deep-learning auto-encoder is suitable for unsupervised anomaly detection.
+
 
 \section{Results}
 \label{sec:Results}
 \section{Conclusion}
 \label{sec:Conclusion}
+As outlined in...
 
 % bad resuls due to:
+%	- features not good for auto-encoder for some reason
 %	- structure of the dataset
 %	- hyper parameter choice
 %	- no cross-validation possible (unlabeled data)
