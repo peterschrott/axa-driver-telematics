@@ -319,7 +319,7 @@ Using the above mentioned features we extracted, exploratory data analysis yield
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{"pics/box-plot-distance"}%width=\textwidth
-\caption{box-plot-distance }
+\caption{Boxplot of distances for 20 driver}
 \label{fig:box-plot-distance}
 \end{figure}
 The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only the variation of driving distance among drivers, but also between different trips for one driver.  In particular, this box plot seems to confirm the assumptions made about driver 18's driving pattern after having seen the plot of all that driver's trip in Figure \ref{fig:driver-18}. That is, because we can clearly see in the box plot , that driver 18 has a very low variation when it comes to trip length. 
@@ -335,7 +335,7 @@ The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only t
 \begin{figure}
 \centering
 \includegraphics[width=\linewidth]{"pics/number-of-breaks-10-120"}%width=\textwidth
-\caption{number-of-breaks-10-120}
+\caption{Number of stops with 10 - 120 seconds}
 \label{fig:number-of-breaks-10-120}
 \end{figure}
 Considering the number of stops per driver and their respective driving trip is also helpful in detecting driving patterns. In Figure \ref{fig:number-of-breaks-10-120}, size and color of the circle visualize the number of stops between 10 seconds and 120 seconds. The insights we gain from this plot can be the revealing of the area the respective driver commonly drives in. A constant high number of short breaks might indicate a driver mainly driving in urban areas. In this case, trips with more infrequent, shorter stops could be considered anomalous because the might originate from a rural driver.
@@ -351,12 +351,23 @@ Considering the number of stops per driver and their respective driving trip is 
 \section{Experiments}
 \label{sec:Experiments}
 
+\subsection{Experimental Approaches}
+\label{subsec:ExpPlan}
+
 \subsection{Sparkling Implementation}
 \label{subsec:sparkling-impl}
+
+\begin{figure}
+\centering
+\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=1.2\linewidth]{"pics/approach2"}
+\caption{Schematic visualization of our experiment(s)}
+\label{fig:approach-2}
+\end{figure}
+
 As stated in section \ref{subsec:Metho-h2o} the scalable machine learning library of H2O.ai builds the core of the experimental implementation. H2O.ai provides a comprehensive API named Sparkling Water for interfacing the H2O cloud. This API is written in Java and Scala and is usually embedded in a data flow of an Apache Spark application. \\
 In the following the implemented data flow and data transformation are explained. The first step is to load the input data from the HDFS on the cluster. A regular Apache Spark RDD is used as container. The first transformation is to convert the line-wise input string to representative POJOs (Plain Old Java Objects). The POJOs are stored in the Apache Spark context on the nodes of the cluster. This is a very common step within scalable data analysis.\\
 Within the next step towards the outlier-detection the RDD containing the input data is transformed to an Apache Spark DataFrame. A DataFrame is the representation of a rational database table in Spark SQL and stored in its SQL-context. Apache Spark aims for structured data processing and acts as distributed SQL-engine. To transform the data, the schema of the table is to be set and alongside the DataFrame registered in the SQL-context. Once this is done, a SQL query can be used to obtain the data in the format of an H2OFrame. A H2OFrame is, analogue to the DataFrame, the representation of data sets within the H2O-context. For the experiments all features for every trip was fetched as training data.\\
-Once the training data are in the right format the model for the deep learning auto-encoder is set up and parametrized. This is done by initiating an instance of the \textbf{DeepLearning} class of the Sparkling Water API. The parameter for experiment 1 and experiment 2 are shown in table \ref{table:param-set-exp1} and \ref{table:param-set-exp2} respectively.
+Once the training data are in the right format the model for the deep learning auto-encoder is set up and parametrized. This is done by initiating an instance of the \textbf{DeepLearning} class of the Sparkling Water API. The parameter for experiment 1 and experiment 2 are shown in table \ref{table:param-set-exp1} and table \ref{table:param-set-exp2} respectively.
 
 \begin{table}
 \centering
@@ -386,19 +397,16 @@ hidden layers        & \{ 15 \}\\
 epochs               & 3\\
 L2-normalization     & 0.2
 \end{tabular}
-\caption{Parameter set for deep learning out-encoder in experiment 1}
+\caption{Parameter set for deep learning out-encoder in experiment 2s}
 \label{table:param-set-exp2}
 \end{table}
 
-
-\begin{figure}
-\centering
-\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=1.2\linewidth]{"pics/approach2"}
-\caption{Schematic visualization of our experiment(s)}
-\label{fig:approach-2}
-\end{figure}
-Figure \ref{insert figure label} outlines the scope of our first experiment, that aims at getting indications as to whether a deep-learning auto-encoder is suitable for unsupervised anomaly detection.
-
+For the prediction the model provides an interface called \textit{scoreAutoEncoder(..)}, which takes the test data as parameter. As stated in section \ref{subsec:Metho-h2o} in our case the test dataset is equivalent to the training dataset. The result of the prediction is a vector containing the reconstruction error of the features for every trip. As the vectors of H2OFrames are immutable the resulting reconstruction errors can be joined to the test dataset row by row. This is simply done by adding the error as additional column to the input data set. Further more the columns of the features are deleted as they are not relevant for further evaluations. \\
+In the final step the H2OFrame is transformed back into Sparks RDD representation. Back in the Spark context, simple a simple map operation is used to  normalize the reconstruction error by using formula (1).
+\begin{align}
+\hat{x_i} = \frac{x_i - min(X)}{max(X) - min(X)}
+\end{align}
+After normalizing Sparks API is used to print the the output to a text file. The resulting text file is in the Kaggle format and contains. contains 547200 rows, containing the probabilities for each driver and trip. Additionally to the output for Kaggel a second file is created containing the raw reconstruction error instead of the probability.
 
 \subsection{Evaluation of the Result}
 \label{subsec:eval-result}
@@ -407,14 +415,13 @@ The format form for Kaggle submissions are outlined in Table \ref{table:kaggle-s
 \begin{table}
 \centering
 \begin{tabular}{l c}
-driver\_trip & prob\\
+driver\_trip, & prob\\
 1\_1,& 1\\
-1\_1,& 1\\
-1\_1,& 1\\
-1\_1,& 0\\
-1\_1,& 1\\
-. & . \\
-. & . \\
+1\_2,& 1\\
+1\_3,& 1\\
+1\_4,& 0\\
+... & ... \\
+... & ... \\
 \end{tabular}
 \caption{Submission format for Kaggle.com}
 \label{table:kaggle-submission}
