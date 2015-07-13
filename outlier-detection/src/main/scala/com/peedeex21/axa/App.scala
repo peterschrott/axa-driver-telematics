@@ -15,9 +15,13 @@ import water.fvec.H2OFrame
 case class DrivesWReconErrOpt(driverId: Option[Double], driveId: Option[Double],
                               reconErr: Option[Double])
 
-case class DrivesWReconErr(driverId: Int, driveId: Int, reconErr: Double)
+case class DrivesWReconErr(driverId: Int, driveId: Int, reconErr: Double) {
+  override def toString = {
+    driverId + "," + driveId + "," + reconErr
+  }
+}
 
-case class KaggleResult(driverId: Int, driveId: Int, outlier: Boolean) {
+case class KaggleResult(driverId: Int, driveId: Int, prob: Double) {
 
   /*
    * e.g.
@@ -25,7 +29,6 @@ case class KaggleResult(driverId: Int, driveId: Int, outlier: Boolean) {
    * 1_1,1
    */
   override def toString = {
-    val prob = if (outlier) "0" else "1"
     driverId + "_" + driveId + "," + prob
   }
 }
@@ -41,7 +44,6 @@ object OutlierDetection extends SparkContextSupport {
   private var featureVariant: String = "int"
   private var outputPath: String = null
 
-  private var stdWeight: Double = 1.0
   private var l1Norm: Double = 0.0
   private var l2Norm: Double = 0.0
 
@@ -122,7 +124,7 @@ object OutlierDetection extends SparkContextSupport {
     // use the autoencoder, obviously
     dlParams._autoencoder = true
     // one hidden layer with 20 neurons
-    dlParams._hidden = Array(14, 4, 14)
+    dlParams._hidden = Array(12)
     // no dropping of constant colors
     dlParams._ignore_const_cols = false
     // number of passes over the training dataset to be carried out
@@ -155,29 +157,41 @@ object OutlierDetection extends SparkContextSupport {
 
     val drivesWErrRdd: RDD[DrivesWReconErr] = h2oCtx.asRDD[DrivesWReconErrOpt](result)
       .map(entry =>
-      DrivesWReconErr(entry.driverId.get.toInt, entry.driveId.get.toInt, entry.reconErr.get)
+        DrivesWReconErr(entry.driverId.get.toInt, entry.driveId.get.toInt, entry.reconErr.get)
       )
 
-    val driversThresholds = drivesWErrRdd.groupBy(_.driverId)
+    drivesWErrRdd.saveAsTextFile(outputPath + "/wRawErrors/")
+
+    /*
+    // min und max per driver
+    val driversMinMaxError = drivesWErrRdd.groupBy(_.driverId)
       .flatMap(group => {
       val driverId = group._1
-      val reconErrors = group._2.map(_.reconErr).toSeq
+      val minError = group._2.map(_.reconErr).min
+      val maxError = group._2.map(_.reconErr).max
 
-      val mean = reconErrors.sum / reconErrors.length
-      val std = math.sqrt(reconErrors.map(err => (err - mean) ** 2).sum / reconErrors.length)
-
-      val threshold = mean + (std * this.stdWeight)
-
-      Seq((driverId, threshold))
+      Seq((driverId, (minError, maxError)))
     })
 
+
     val kaggleResultRdd = drivesWErrRdd.map(entry => (entry.driverId, entry))
-      .leftOuterJoin(driversThresholds)
+      .leftOuterJoin(driversMinMaxError)
       .map(join => {
       val driveWReconErr = join._2._1
-      val threshold = join._2._2.get
-      val prob = driveWReconErr.reconErr > threshold
+      val minErrorDriver = join._2._2.get._1
+      val maxErrorDriver = join._2._2.get._2
+      val prob = 1 - (driveWReconErr.reconErr - minErrorDriver) / (maxErrorDriver - minErrorDriver)
+
       new KaggleResult(driveWReconErr.driverId, driveWReconErr.driveId, prob)
+    })*/
+
+    /* global min und max */
+    val globalMinError = drivesWErrRdd.map(_.reconErr).min()
+    val globalMaxError = drivesWErrRdd.map(_.reconErr).max()
+
+    val kaggleResultRdd = drivesWErrRdd.map(driver => {
+      val prob = 1 - (driver.reconErr - globalMinError) / (globalMaxError - globalMinError)
+      new KaggleResult(driver.driverId, driver.driveId, prob)
     })
 
     //
@@ -185,22 +199,6 @@ object OutlierDetection extends SparkContextSupport {
     //
     println("\n====> Write the predictions to the output file. \n")
     kaggleResultRdd.saveAsTextFile(outputPath + "/kaggleResult")
-
-    //
-    // count the number of outliers per driver
-    //
-    val nOutlierByDriver = kaggleResultRdd.groupBy(_.driverId).flatMap(group => {
-      val driverId = group._1
-      val nOutlier =
-        group._2.map(_.outlier match {
-          case true => 1
-          case false => 0
-        }).toSeq.sum
-
-      Seq((driverId, nOutlier))
-    })
-
-    nOutlierByDriver.saveAsTextFile(outputPath + "/nOutlierByDriver")
 
     // Stop Spark cluster and destroy all executors
     if (System.getProperty("spark.ext.h2o.preserve.executors") == null) {
@@ -214,26 +212,24 @@ object OutlierDetection extends SparkContextSupport {
    * @return true if parsing of arguments was successful, otherwise false
    */
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length == 6) {
+    if (args.length == 5) {
       inputPath = args(0)
       featureVariant = args(1)
       outputPath = args(2)
-      stdWeight = args(3).toDouble
-      l1Norm = args(4).toDouble
-      l2Norm = args(5).toDouble
+      l1Norm = args(3).toDouble
+      l2Norm = args(4).toDouble
       true
     } else {
       println(
         """
           |Failed executing OutlierDetection. Wrong number of arguments.
-          |  Usage: FeatureExtractor <input path> <feature type> <output path> <stdWeight> <L1> <L2>
+          |  Usage: FeatureExtractor <input path> <feature type> <output path> <L1> <L2>
         """.stripMargin)
       false
     }
   }
 
 }
-
 
 object OutlierDetection2 extends SparkContextSupport {
 
@@ -322,15 +318,10 @@ object OutlierDetection2 extends SparkContextSupport {
         " Building model for driver " + driverId +". \n")
       counter += 1
 
-      query = "SELECT * FROM drives WHERE driverId = " + driverId
-
       // Training data
+      query = "SELECT * FROM drives WHERE driverId = " + driverId
       val train: H2OFrame = sqlCtx.sql(query)
 
-      //
-      // Run Deep Learning for each driver
-      //
-      println("\n====> Running DeepLearning on the input data. \n")
       /* Configure Deep Learning algorithm */
       val dlParams = new DeepLearningParameters()
       dlParams._train = train
@@ -343,7 +334,7 @@ object OutlierDetection2 extends SparkContextSupport {
       // use the autoencoder, obviously
       dlParams._autoencoder = true
       // one hidden layer with 20 neurons
-      dlParams._hidden = Array(14, 7, 14)
+      dlParams._hidden = Array(12)
       // no dropping of constant colors
       dlParams._ignore_const_cols = false
       // number of passes over the training dataset to be carried out
@@ -369,7 +360,6 @@ object OutlierDetection2 extends SparkContextSupport {
       // map the errors to the corresponding drive
       //
       println("\n====> Joining the input data with the construction errors row by row. \n")
-
       val resultD = train.deepCopy(null)
       resultD.remove(features)
       resultD.add(reconstructionError)
@@ -380,35 +370,43 @@ object OutlierDetection2 extends SparkContextSupport {
       }
     }
 
-    //
-    // Evaluate the results
-    //
-    println("\n====> Evaluation by calculating thresholds. \n")
-
-    val drivesWErrRdd = result.get.map(entry =>
+    val drivesWErrRdd: RDD[DrivesWReconErr] = h2oCtx.asRDD[DrivesWReconErrOpt](result.get)
+      .map(entry =>
       DrivesWReconErr(entry.driverId.get.toInt, entry.driveId.get.toInt, entry.reconErr.get)
-    )
+      )
 
-    val driversThresholds = drivesWErrRdd.groupBy(_.driverId)
+    drivesWErrRdd.saveAsTextFile(outputPath + "/wRawErrors/")
+
+    /*
+    // min und max per driver
+    val driversMinMaxError = drivesWErrRdd.groupBy(_.driverId)
       .flatMap(group => {
       val driverId = group._1
-      val reconErrors = group._2.map(_.reconErr).toSeq
+      val minError = group._2.map(_.reconErr).min
+      val maxError = group._2.map(_.reconErr).max
 
-      val mean = reconErrors.sum / reconErrors.length
-      val std = math.sqrt(reconErrors.map(err => (err - mean) ** 2).sum / reconErrors.length)
-
-      val threshold = mean + (std * this.stdWeight)
-
-      Seq((driverId, threshold))
+      Seq((driverId, (minError, maxError)))
     })
 
+
     val kaggleResultRdd = drivesWErrRdd.map(entry => (entry.driverId, entry))
-      .leftOuterJoin(driversThresholds)
+      .leftOuterJoin(driversMinMaxError)
       .map(join => {
       val driveWReconErr = join._2._1
-      val threshold = join._2._2.get
-      val prob = driveWReconErr.reconErr > threshold
+      val minErrorDriver = join._2._2.get._1
+      val maxErrorDriver = join._2._2.get._2
+      val prob = 1 - (driveWReconErr.reconErr - minErrorDriver) / (maxErrorDriver - minErrorDriver)
+
       new KaggleResult(driveWReconErr.driverId, driveWReconErr.driveId, prob)
+    })*/
+
+    /* global min und max */
+    val globalMinError = drivesWErrRdd.map(_.reconErr).min()
+    val globalMaxError = drivesWErrRdd.map(_.reconErr).max()
+
+    val kaggleResultRdd = drivesWErrRdd.map(driver => {
+      val prob = 1 - (driver.reconErr - globalMinError) / (globalMaxError - globalMinError)
+      new KaggleResult(driver.driverId, driver.driveId, prob)
     })
 
     //
@@ -416,22 +414,6 @@ object OutlierDetection2 extends SparkContextSupport {
     //
     println("\n====> Write the predictions to the output file. \n")
     kaggleResultRdd.saveAsTextFile(outputPath + "/kaggleResult")
-
-    //
-    // count the number of outliers per driver
-    //
-    val nOutlierByDriver = kaggleResultRdd.groupBy(_.driverId).flatMap(group => {
-      val driverId = group._1
-      val nOutlier =
-        group._2.map(_.outlier match {
-          case true => 1
-          case false => 0
-        }).toSeq.sum
-
-      Seq((driverId, nOutlier))
-    })
-
-    nOutlierByDriver.saveAsTextFile(outputPath + "/nOutlierByDriver")
 
     // Stop Spark cluster and destroy all executors
     if (System.getProperty("spark.ext.h2o.preserve.executors") == null) {
@@ -445,19 +427,18 @@ object OutlierDetection2 extends SparkContextSupport {
    * @return true if parsing of arguments was successful, otherwise false
    */
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length == 6) {
+    if (args.length == 5) {
       inputPath = args(0)
       featureVariant = args(1)
       outputPath = args(2)
-      stdWeight = args(3).toDouble
-      l1Norm = args(4).toDouble
-      l2Norm = args(5).toDouble
+      l1Norm = args(3).toDouble
+      l2Norm = args(4).toDouble
       true
     } else {
       println(
         """
           |Failed executing OutlierDetection. Wrong number of arguments.
-          |  Usage: FeatureExtractor <input path> <feature type> <output path> <stdWeight> <L1> <L2>
+          |  Usage: FeatureExtractor <input path> <feature type> <output path> <L1> <L2>
         """.stripMargin)
       false
     }
