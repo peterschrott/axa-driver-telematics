@@ -98,4 +98,8 @@ def plot_all_drives(path_to_data= '../../data/drivers',driverId=1):
 # 1080 97 0.0221480216
 # 1080 79 0.0190661134
 # 1080 112 0.018655621
-plot_drives(driverId=1080, outliers=[100, 112,79,97,2,187])#, exclude_drives=[100])
+
+# plot_drives(driverId=1080, outliers=[100, 112,79,97,2,187])#, exclude_drives=[100])
+plot_drives(driverId=1634, outliers=[136])
+
+# plot_drives(driverId=18,outliers=[126,104,96,156,88])
