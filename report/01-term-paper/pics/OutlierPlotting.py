@@ -22,15 +22,13 @@ def display_outliers3d():
 	N2 = np.array([normal_2x, normal_2y,normal_2z])
 	markersize = 26
 	
-	norm1 = ax.scatter(N1[0,:], N1[1,:], N1[2,:], c='green', s=26)
-	norm2 = ax.scatter(N2[0,:], N2[1,:], N2[2,:], s=26)
-	out = ax.scatter(outliers[0,:], outliers[1,:], outliers[2,:], c='red', marker='o', s=26)
-	frame = plt.gca()
-
-
+	norm1 = ax.scatter(N1[0,:], N1[1,:], N1[2,:], c='green', s=26)#, scatterpoints= 1)
+	norm2 = ax.scatter(N2[0,:], N2[1,:], N2[2,:], s=26)#, scatterpoints=1)
+	out = ax.scatter(outliers[0,:], outliers[1,:], outliers[2,:], c='red', marker='o', s=26)#, scatterpoints=1)
 	ax.set_xticks([])
 	ax.set_yticks([])
 	ax.set_zticks([])
+	plt.legend((norm1, norm2, out), ('Population 1', 'Population 2' ,'Outliers'))
 	return ax, norm1, norm2, out
 	# return plt
 
@@ -70,15 +68,15 @@ def plot2D():
 	frame = plt.gca()
 	frame.axes.get_xaxis().set_ticks([])
 	frame.axes.get_yaxis().set_ticks([])
-	plt.legend(loc='upper left', scatterpoints=1)
+	plt.legend(loc='upper left')
 	# plt.show()
 	plt.savefig(fig)
 
-plot2D()
+# plot2D()
 
-# ax, norm1, norm2, out = display_outliers3d()
-# plot_reconstruction(ax, norm1, norm2, out)
+ax, norm1, norm2, out = display_outliers3d()
+plot_reconstruction(ax, norm1, norm2, out)
 # ax.legend((norm1, norm2, out), ('Population 1', 'Population 2', 'Outlier'), scatterpoints=1)
 
 
-# plt.show()
+plt.show()
