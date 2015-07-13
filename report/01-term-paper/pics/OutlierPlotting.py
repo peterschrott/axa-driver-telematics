@@ -7,8 +7,8 @@ normal_1x = np.random.rand(30) - 1
 normal_1y = np.random.rand(30) + 2
 normal_1z = 2 * np.random.rand(30) ** 2 + 1
 
-normal_2x = np.random.rand(30) - 1
-normal_2y = np.random.rand(30) + 2
+normal_2x = np.random.rand(30) + 3
+normal_2y = np.random.rand(30) + 1
 normal_2z = 2 * np.random.rand(30) ** 2 + 12
 outliers = np.array([[5, -4], [4, 7], [8, 10]])
 

@@ -15,7 +15,8 @@ def plot_drives(path_to_data= '../../data/drivers',driverId=1, outliers=False, e
     r = lambda : np.random.randint(0, 255)
     path_to_driver = path_to_data + '/' + str(driverId)
     drives = os.listdir(path_to_driver)
-    num_outliers = len(outliers)
+    if outliers:
+        num_outliers = len(outliers)
     outlier_printed = False
     for drive in drives:
         print 'plotting ', str(drive)
@@ -77,17 +78,18 @@ def plot_all_drives(path_to_data= '../../data/drivers',driverId=1):
 # plot_drives(driverId=1634, outliers=[136])
 # plot_drives(driverId=1634)
 
-# plot_all_drives(driverId=1080) #junk drives
-# plot_all_drives(driverId=235) # not as much
-# plot_all_drives(driverId=1809)#not as much
-# plot_all_drives(driverId=1635)#one particularly long drive
-# plot_all_drives(driverId=180)# not as much
-# plot_all_drives(driverId=3506)# yup
-# plot_all_drives(driverId=2267)# not as much, driving pattern though
-# plot_all_drives(driverId=2818)# no junk, but some very long drives
-# plot_all_drives(driverId=2193)
-# plot_all_drives(driverId=2782)
-# plot_all_drives(driverId=2417)
+
+plot_drives(driverId=1635)#one particularly long drive
+plot_drives(driverId=1635, outliers=[160, 88])#, 134])
+plot_all_drives(driverId=3506)# yup
+
+'''
+1635 160 0.0602028979
+1635 88 0.0485665774
+1635 134 0.0311583923
+1635 7 0.023674702
+1635 109 0.0184505047
+'''
 
 
 
@@ -100,6 +102,6 @@ def plot_all_drives(path_to_data= '../../data/drivers',driverId=1):
 # 1080 112 0.018655621
 
 # plot_drives(driverId=1080, outliers=[100, 112,79,97,2,187])#, exclude_drives=[100])
-plot_drives(driverId=1634, outliers=[136])
+# plot_drives(driverId=1634, outliers=[136])
 
 # plot_drives(driverId=18,outliers=[126,104,96,156,88])
