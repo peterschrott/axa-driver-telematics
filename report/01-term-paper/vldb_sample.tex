@@ -86,7 +86,6 @@ The value of identifying outliers in a dataset lies in the action one can take a
 Anomaly detection can happen in a supervised, semi-super\-vised, as well as in an unsupervised fashion. The credit card fraud detection would be a semi-supervised learning task, since we can assume, that a new credit card will not be the subject of fraud for at least the first couple of purchases. Hence, we obtain a training set of "normal" purchases (i.e. data point) and can for each newly generated data point decide, whether it conforms to the pattern or does not. Since our project is focused exclusively on the unsupervised case where we do not know which data points are considered normal, but rather have to find a structure or pattern in the data first, in order to then be able to identify data points not conforming to the pattern, the next section will focus on unsupervised anomaly detection and the challenges we face in its context.
 
 
-
 \subsection{Challenges of Unsupervised Anomaly Detection}
 \label{subsec:Intro-challenges}
 
@@ -132,7 +131,7 @@ A schematic diagram of an auto-encoder taken from \cite{article:astronomy} is gi
 \section{Problem Statement} \label{problem_statement}
 %with Target and Scope
 %The \textit{proceedings} are the records of a conference.
-As already mentioned in \textbf{\ref{sec:Introduction}. \nameref{sec:Introduction}}, anomaly detection refers to the task of identifying observations, that do not match the general pattern of the data set they arise in. Oftentimes anomaly detection happens in an unsupervised context, which means that the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. This is also the case we want to investigate regarding the usability of a certain algorithm originally designed for a different purpose. Within the scope of this project, we analyze the performance of a particular algorithm more commonly used in a field different to the one of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a deep learning auto-encoder} (see section \ref{subsec:Intro-deep}) \textbf{well suited for anomaly detection in an unlabeled dataset?}
+As already mentioned in \textbf{\ref{sec:Introduction}. \nameref{sec:Introduction}}, anomaly detection refers to the task of identifying observations, that do not match the general pattern of the data set they arise in. Oftentimes anomaly detection happens in an unsupervised context, which means that the dataset being operated on is unlabeled, and the goal is to identify exactly those samples, that fit the pattern of the dataset the least. This is also the case we want to investigate regarding the usability of a certain algorithm originally designed for a different purpose. Within the scope of this project, we analyze the performance of a particular algorithm more commonly used in a field different to the one of unsupervised anomaly detection. Specifically, with this project, we aim at providing an answer or at least hints to the answer of the question: \textbf{Is a deep learning auto-encoder} (see Section \ref{subsec:Intro-deep}) \textbf{well suited for anomaly detection in an unlabeled dataset?}
 
 
 \subsection{Target}\label{target}
@@ -239,7 +238,7 @@ In our case, however, the fact that more than 1,500 teams already submitted thei
 
 \begin{figure}
 \centering
-\includegraphics[trim=1cm 4cm 8cm 0.5cm, clip=true, width=\linewidth]{"pics/approach1"}
+\includegraphics[trim=0cm 5.8cm 11.7cm 0cm, clip=true, width=0.8\linewidth]{"pics/approach1"}
 \caption{Schematic visualization of our feature extraction}
 \label{fig:approach-1}
 \end{figure}
@@ -253,7 +252,7 @@ After extracting all the features, we obtain one feature vector for each trip of
 \delta d_i &= \sqrt{(x_{i-1} - x_{i})^2 + (y_{i-1} - y_{i})^2} \\
 \delta v_i &= \frac{\delta d}{\delta t} \\
 \delta a_i &= \frac{\delta v_{i-1} - \delta v_{i}}{\delta t} \\
-\delta \alpha_i &= \arccos \frac{\vec{v_1} \cdot \vec{v_2}}{|\vec{v_1}|_2 * |\vec{v_2}|_2}
+\cos \alpha_i &= \frac{\vec{v_1} \cdot \vec{v_2}}{|\vec{v_1}|_2 * |\vec{v_2}|_2}
 \end{align}
 \begin{align*}
 \text{where:}\\
@@ -288,7 +287,7 @@ Using the above mentioned features we extracted, exploratory data analysis yield
 \caption{Boxplot of distances for 20 driver}
 \label{fig:box-plot-distance}
 \end{figure}
-The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only the variation of driving distance among drivers, but also between different trips for one driver.  In particular, this box plot seems to confirm the assumptions made about driver 18's driving pattern after having seen the plot of all that driver's trip in Figure \ref{fig:driver-18}. That is, because we can clearly see in the box plot , that driver 18 has a very low variation when it comes to trip length. 
+The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only the variation of driving distance among drivers, but also between different trips for one driver.  In particular, this box plot seems to confirm the assumptions made about driver 18's driving pattern after having seen the plot of all that driver's trip in Figure \ref{fig:driver-18}. That is, because we can clearly see in the box plot, that driver 18 has a very low variation when it comes to trip length. 
 
 \begin{figure}
 \centering
@@ -302,34 +301,42 @@ Considering the number of stops per driver and their respective driving trip is 
 \section{Experiments}
 \label{sec:Experiments}
 
-%\subsection{Experimental Approaches}
-%\label{subsec:ExpPlan}
-
 \begin{figure}
 \centering
-\includegraphics[trim=0cm 26cm 9.5cm 0cm, clip=true, width=\linewidth]{"pics/experiment-plan"}
+\includegraphics[trim=0cm 24.2cm 9.2cm 0cm, clip=true, width=\linewidth]{"pics/experiment-plan"}
 \caption{Experiment plan}
 \label{fig:Exp-plan}
 \end{figure}
 
-In order to ensure a structured approach for finding the optimal application of the deep learning auto-encoder on the AXA Driver Telematics datast and the corresponding hyper-parameters, we set up a plan to run the experiments. A simplification of the plan can be seen in figure \ref{fig:Exp-plan}. To cover the question, whether the anomalies can only be found among the trips of one driver or even in a more general global context, we build the model in two different ways. The idea behind this approach is, that a model built on the entire dataset is too generalized in respect to local outliers. The second approach aims at overcoming this generalization by assembling trips of one driver to build the trainings set for the deep learner auto-encoder.\\
-A similar method is applied for the calculation of the outlier probability of each trip. A more detailed description of the computations can be found in section \ref{subsec:sparkling-impl}. The determination of the probability is considered in a local, as well as a global context.
+In order to ensure a structured approach for finding the optimal application of the deep learning auto-encoder on the AXA Driver Telematics datast and the corresponding hyper-parameters, we set up a plan to run the experiments. A simplification of the execution plan can be seen in figure \ref{fig:Exp-plan}. To cover the question, whether the anomalies can only be found among the trips of one driver or even in a more general global context, we build the model in two different ways. First the model is fitted on the entire trainings dataset. In the second and third approach one model for each driver is build. In the third run a recursive implementation is chosen.
 
+\subsection{Experiment 1}
+\label{subsec:exp-1}
+In experiment 1 a generalized model is build. The idea behind this approach is, that a wide model will cause a certain reconstruction error for each feature vector. Hence the generalization this error will not be minimal, but bigger for anomalies. Our assumption is that the resulting vector of reconstruction errors will represent the probability of an outlying data point. The normalization of the reconstruction error is, as it can be seen in Figure \ref{fig:Exp-plan}. The determination of the probability is considered in a local, as well as a global context. A more detailed description of the computations can be found in section \ref{subsec:sparkling-impl}. 
+
+\subsection{Experiment 2}
+\label{subsec:exp-2}
+
+The second approach aims at overcoming this generalization by assembling trips of one driver to build the trainings set for the deep learner auto-encoder. In a first step a unique set of driver IDs is created. After that, iterative model fitting and scoring is done driver by driver. To avoid over-fitting a higher L2-regularisation is applied. The figures can be seen in Table \ref{table:param-set-exp2}. The final result is build as a union of the individual result sets. The normalization is performed as explained in experiment 1.
+
+\subsection{Experiment 3}
+\label{subsec:exp-3}
+The idea of experiment 3 lays in the result of the initial two experiments (see section \ref{ssubsec:Res-e1} and \ref{ssubsec:Res-e2}) and the qualitative evaluation as described in section \ref{subsec:Quali-eval}. Low results on Kaggle.com leave open questions about the quantity of the model. However plots show, that the model is capable of finding outliers at least outliers in a visual respect. For experiment 3 the assumption is made, that extreme outliers influence the model fitting in a negative manner. To prove the truth of this assumption we use a recursive model fitting approach. After fitting a model for each driver on the entire data set the two trips with the highest reconstruction error are removed from the data set. The filtered dataset is fed back into the model building process. This method helps to prevent a strongly biased model fitting on outlying data points. The parameter set is left unchanged to experiment 2. Hence the trips with the biggest reconstruction error are removed they also will not influence the final computation of the probability as described in formula (5).
 
 \subsection{Sparkling Implementation}
 \label{subsec:sparkling-impl}
 
 \begin{figure}
 \centering
-\includegraphics[trim=1cm 0cm 1cm 0.5cm, clip=true, width=\linewidth]{"pics/approach2"}
-\caption{Schematic visualization of our experiment(s)}
+\includegraphics[trim=0cm 9cm 7.4cm 0cm, clip=true, width=0.8\linewidth]{"pics/approach2"}
+\caption{Schematic visualization of experiment(s)}
 \label{fig:approach-2}
 \end{figure}
 
 As stated in section \ref{subsec:Metho-h2o} the scalable machine learning library of H2O.ai builds the core of the experimental implementation. H2O.ai provides a comprehensive API named Sparkling Water for interfacing the H2O cloud. This API is written in Java and Scala and is usually embedded in a data flow of an Apache Spark application. \\
-In the following, the implemented data flow and data transformations are explained. The first step is to load the input data from the HDFS on to the cluster. A regular Apache Spark RDD is used as container. The first transformation is to convert the line-wise input string to representative Plain Old Java Objects (POJOs). The POJOs are stored in the Apache Spark context on the nodes of the cluster. This is a very common step within scalable data analysis.\\
+In the following, the implemented data flow and data transformations are explained. See figure \ref{fig:approach-2} for an overview. The first step is to load the input data from the HDFS on to the cluster. A regular Apache Spark RDD is used as container. The first transformation is to convert the line-wise input string to representative Plain Old Java Objects (POJOs). The POJOs are stored in the Apache Spark context on the nodes of the cluster. This is a very common step within scalable data analysis.\\
 Within the next step towards the outlier-detection, the RDD containing the input data is transformed to an Apache Spark DataFrame. A DataFrame is the representation of a rational database table in Spark SQL and stored in its SQL-context. Apache Spark aims at structured data processing and acts as distributed SQL-engine. To transform the data, the schema of the table is to be set and alongside the DataFrame registered in the SQL-context. Once this is done, a SQL query can be used to obtain the data in the format of an H2OFrame. A H2OFrame is analogue to the DataFrame, the representation of data sets within the H2O-context. For the experiments, we fetch all features for every trip as training data.\\
-Once the training data is in the right format the model for the deep learning auto-encoder is set up and parameterized. This is done by initiating an instance of the \textbf{DeepLearning} class of the Sparkling Water API. The parameters for experiment 1 and experiment 2 are shown in table \ref{table:param-set-exp1} and table \ref{table:param-set-exp2} respectively. This parameter set is chosen based on the evaluation results returned by Kaggle.com. As the model fitting takes place in a unsupervised environment, the response column will be ignored and for that reason set to any non static column. Tangens hyperbolicus provides a bounded activation function for the output forwarding to the next neuron. It is a simple activation function and the symmetry around 0 makes the algorithm converge faster. The number of hidden layers is set to 1 layer with 8 neuron. The number of neurons on the hidden layer is determined by applying Principal Component Analysis (PCA) on the dataset and getting an estimate of the number of principal components that cover most of the variance in the dataset.
+Once the training data is in the right format the model for the deep learning auto-encoder is set up and parameterized. This is done by initiating an instance of the \textit{DeepLearning} class of the Sparkling Water API. The parameters for experiment 1 and experiment 2 are shown in table \ref{table:param-set-exp1} and table \ref{table:param-set-exp2} respectively. This parameter set is chosen based on the evaluation results returned by Kaggle.com. As the model fitting takes place in a unsupervised environment, the response column will be ignored and for that reason set to any non static column. Tangens hyperbolicus provides a bounded activation function for the output forwarding to the next neuron. It is a simple activation function and the symmetry around 0 makes the algorithm converge faster. The number of hidden layers is set to 1 layer with 8 neuron. The number of neurons on the hidden layer is determined by applying Principal Component Analysis (PCA) on the dataset and getting an estimate of the number of principal components that cover most of the variance in the dataset.
 
 \begin{table}
 \centering
@@ -339,10 +346,10 @@ training data        & all available trips (2736 x 200) \\
 response column      & any non static column \\
 autoencoder          & true \\
 activation function  & tanh \\
-hidden layers       & 1 \\
+hidden layers        & 1 \\
 Neurons per hidden layer        & \{ 8 \}\\
-epochs               & 3\\
-L2-normalization     & 0.01
+epochs               & 20\\
+L2-normalization     & 0.001
 \end{tabular}
 \caption{Parameter set for deep learning auto-encoder in experiment 1}
 \label{table:param-set-exp1}
@@ -356,9 +363,9 @@ training data        & all trips of current driver (200) \\
 response column      & any non static column \\
 autoencoder          & true \\
 activation function  & tanh \\
-hidden layers       & 1 \\
+hidden layers        & 1 \\
 Neurons per hidden layer        & \{ 8 \}\\
-epochs               & 3\\
+epochs               & 20\\
 L2-normalization     & 0.2
 \end{tabular}
 \caption{Parameter set for deep learning auto-encoder in experiment 2s}
@@ -401,63 +408,93 @@ driver\_trip, & prob\\
 
 \subsection{Kaggle Results}
 
+As stated in section \ref{subsec:eval-result} uploaded predications are evaluated on Kaggle.com. 
+
+%Driven by our motivation and the results of applying H2O's deep learner on the MNIST dataset of handwritten digits manual investigation are to be done.
+
+\subsubsection*{Result Experiment 1}
+\label{ssubsec:Res-e1}
+
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{"pics/kaggle-result"}
-\caption{Scoring on Kaggle.com's leaderboard}
-\label{fig:kaggle-result}
+\includegraphics[width=\linewidth]{"pics/kaggle-result-1"}
+\caption{Scoring on Kaggle.com's leaderboard for experiment 1}
+\label{fig:kaggle-result1}
 \end{figure}
 
-As stated in section \ref{subsec:eval-result} uploaded predications are evaluated on Kaggle.com. Unfortunately the highest achieved ROC score was 0.53014. This score is only slightly better than random guessing or marking every trip with the highest probability. This result is invariant towards changes in normalisation, activation function, loss function as well as the methodology of building the deep learning auto-encoder model. Also the different approaches for computation of the probability does not significantly change the score. Explanations for this result are among others :
+The score on Kaggle.com for experiment 1 was quite low. We achieved a ROC score of 0.53014 as it can be seen in Figure \ref{fig:kaggle-result1}. This score is only slightly better than randomly guessing or labeling every trip with the highest probability. The experiment also showed, that result is invariant towards changes in normalisation, activation function, loss function as well as the methodology of building the deep learning auto-encoder model. Also the different approaches for computation of the probability does not significantly change the score.
+
+Explanations for this result are among others :
 \begin{itemize}
-\item Poor choice of features for unsupervised learning
+\item Too hight degree of generalization of the model
+\item Wide variances between individual drivers
 \item Lack of cross-validation for optimizing the hyper-pa\-ra\-me\-ter
 \end{itemize}
-Driven by our motivation and the results of applying H2O's deep learner on the MNIST dataset of handwritten digits manual investigation are to be done. 
 
+\subsubsection*{Experiment 2}
+\label{ssubsec:Res-e2}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/kaggle-result-2"}
+\caption{Scoring on Kaggle.com's leaderboard for experiment 2}
+\label{fig:kaggle-result2}
+\end{figure}
+
+Driven by the sobering low results of experiment 1 and the change of model fitting strategy increased the score on Kaggle.com by almost 20\%. As shown in Figure \ref{fig:kaggle-result2} the score reached 61.897\% of a prediction accuracy. This result confirms the assumption made for experiment 2. We claimed a less general fitting approach will result in a better detection of anomalies. 
+
+\subsubsection*{Result Experiment 3}
+\label{ssubsec:Res-e3}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{"pics/kaggle-result-3"}
+\caption{Scoring on Kaggle.com's leaderboard for experiment 3}
+\label{fig:kaggle-result3}
+\end{figure}
+ 
 
 \subsection{Qualitative Evaluation}
+\label{subsec:Quali-eval}
 
 For the qualitative evaluation, the drivers having trips with especially high reconstruction errors are filtered from the original data set. For each unique driver out of the filtered data, all trips are plotted. Those trips with the by far highest reconstruction error are then marked red. \\
-Manually evaluating those chosen drives (without true labels of course) shows some interesting insights, giving more hints as to how the poor accuracy of predictions came to be, as opposed to the value of the area under the ROC curve given by Kaggle.com, which does not allow for more asumptions.
+Manually evaluating those chosen trips (without true labels of course) shows some interesting insights, giving more hints as to how the poor accuracy of predictions came to be, as opposed to the value of the area under the ROC curve given by Kaggle.com, which does not allow for more asumptions.
 \begin{figure}
 \begin{subfigure}{\linewidth}
 	\centering
 	\includegraphics[width=.8\linewidth]{"pics/outliers_junk/D_1634_with_136"}
-	\caption{All trips of driver 1634 including junk drive}
-	\label{fig:d-1634-junk}
+	\caption{All trips including junk}
+	\label{subfig:d-1634-junk}
 \end{subfigure}
 \begin{subfigure}{\linewidth}
   \centering
   \includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1634_wo_136"}
-\caption{Trips of driver 1634 without junk drive}
-\label{fig:d-1634}
+\caption{Trips without junk drive}
+\label{subfig:d-1634}
 \end{subfigure}
-\caption{All trips of driver 1634 and all but the one with the highest reconstruction error.}
-\label{fig:1634}
+\caption{All trips of driver 1634}
+\label{fig:d-1634}
 \end{figure}
 
-In Subfigure \ref{fig:d-1634-junk}  it can clearly be seen, that the driving trip with the highest reconstruction error is a false recording or junk drive, as all the other drives can barely be seen (small fuzz in the top left corner). This becomes even more obvious after removing said junk drive from the plot with the goal of being able to see the structure of the other drives, as illustrated in Subfigure \ref{fig:d-1634}. This figure reveals the true structure of the nonjunk drives of driver 1634. The same pattern can be seen in figure \ref{fig:d-1635-junk} and Subfigure \ref{fig:d-1635}. The unintuitively edgy and straight looking lines can clearly be classified as data noise from an objective point of view. Those specific trips are clearly not more than junk data resulting from poor GPS recordings. Apparently, only jumps in locations are recorded, even outside of the boundary of a usual trip distance as Subfigure \ref{fig:d-1634-junk} shows in a clear manner. For other drivers, not containing obvious junk drives, the model seems to successfully identify (judgin by eye) anomalous driving trips. This can be seen in Figure \ref{fig:d-3506}\\
+In Subfigure \ref{subfig:d-1634-junk}  it can clearly be seen, that the driving trip with the highest reconstruction error is a false recording or junk drive, as all the other trips can barely be seen (small fuzz in the top left corner). This becomes even more obvious after removing said junk drive from the plot with the goal of being able to see the structure of the other drives, as illustrated in Subfigure \ref{subfig:d-1634}. This figure reveals the true structure of the nonjunk drives of driver 1634. The same pattern can be seen in Figure \ref{fig:d-1635}. The unintuitively edgy and straight looking lines can clearly be classified as data noise from an objective point of view. Those specific trips are clearly not more than junk data resulting from poor GPS recordings. Apparently, only jumps in locations are recorded, even outside of the boundary of a usual trip distance as Subfigure \ref{subfig:d-1634-junk} shows in a clear manner. For other drivers, not containing obvious junk drives, the model seems to successfully identify (judgin by eye) anomalous driving trips. This can be seen in Figure \ref{fig:d-3506}\\
 The conclusions that can be drawn from the qualitative evaluation is, that the model was successfully trained to find outliers. Unfortunately, our feature extraction does not account for all data noise and junk drives, which might cause problems in two ways. First of all, the model (or what is considered normal) will additionally to the influence of the outliers be influenced by the data noise. Secondly, resulting confidence scores that a data point is anomalous are of course higher for junk trips, because those are - in a way - anomalous. The computation of the outlier probabilities, based on the reconstruction error, possibly causes the suboptimal result on Kaggle.com. Observing formula (5) shows, that if the maximum of the reconstruction error is far off from the other values, the range of the probabilities is distorted. That is, a junk drive that becomes a extraordinarily high confidence score of being anomalous, causes the other drives to have a in relation to that score really low score. Computing the outlier probabilities then results in having a really high number of trips with a probability of being normal close to 99 \%, while only the few junk drives have a low probability of being considered normal.
 This can also be seen by analyzing the files, uploaded to Kaggle.com.
-
-
 
 \begin{figure}
 \begin{subfigure}{\linewidth}
 	\centering
 	\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1635_unclean"}
-	\caption{All trips of driver 1635 including junk drive}
-	\label{fig:d-1635-junk}
+	\caption{All trips including junk}
+	\label{subfig:d-1635-junk}
 \end{subfigure}
 \begin{subfigure}{\linewidth}
   \centering
-	\includegraphics[width=\linewidth]{"pics/outliers_junk/D_1635_clean"} %TODO
-	\caption{Trips of driver 1635 without junk drive}
-	\label{fig:d-1635}
+	\includegraphics[width=0.8\linewidth]{"pics/outliers_junk/D_1635_clean"}
+	\caption{Trips without junk drive}
+	\label{subfig:d-1635}
 \end{subfigure}
-\caption{Contextual anomaly}
-\label{fig:contextual-anomaly}
+\caption{Trips of driver 1635}
+\label{fig:d-1635}
 \end{figure}
 %------------------------------------------------------------
 \begin{figure}
@@ -470,8 +507,8 @@ This can also be seen by analyzing the files, uploaded to Kaggle.com.
 \section{Conclusion}
 \label{sec:Conclusion}
 
-The aim of our project was to provide evidence to the question as to whether the deep learning auto-encoder is suitable for anomaly detection in an unsupervised environment. Applying an existing parallel implementation of the algorithm from a software house with a particularly strong reputation - namely H2O.ai - should enable us to provide evidence to the anwer to the before mentioned question to at least some extent. Since evaluating unsupervised learning algorithms is a particularly tough task, in particular if the dataset's size has to be big enough to be considered "Big Data", working on a dataset from Kaggle.com, should allow us to let their system take care of the model evaluation part. Additionally, the availability of scores from more than 1,500 other teams using other algorithms would allow us to compare the auto-encoder's performance directly to those of other algorithms.\\
-As we describe in Section \ref{sec:Results}, our third and last experiment would have finished 952th out of 1,529 teams by obtaining an area under the ROC curve value of 0.6239. This result is far from being optimal for the use case of anomaly detection. However, it is also significantly better than the random classifier benchmark of 0.5. That being said, taking our inexperience with neural networks and unsupervised anomaly detction into account, one might argue, that an expert in the area or at least a more experienced team might achieve better results using the same algorithm, but in a more experienced design of experiments. Also, paying more attention to the noise contained in the dataset, along with smarter feature extraction might lead to further improvements. Conceptionally, however, we show, that the deep learning auto-encoder is applicable to real world unsupervised anomaly detection, althogh it is particularly tough to find the right hyperparameters. \\
+The aim of our project was to provide evidence to the question as to whether the deep learning auto-encoder is suitable for anomaly detection in an unsupervised environment. Applying an existing parallel implementation of the algorithm from a software house with a particularly strong reputation - namely H2O.ai - should enable us to provide evidence to the answer to the before mentioned question to at least some extent. Since evaluating unsupervised learning algorithms is a particularly tough task, in particular if the dataset's size has to be big enough to be considered "Big Data", working on a dataset from Kaggle.com, should allow us to let their system take care of the model evaluation part. Additionally, the availability of scores from more than 1,500 other teams using other algorithms would allow us to compare the auto-encoder's performance directly to those of other algorithms.\\
+As we describe in Section \ref{sec:Results}, our third and last experiment would have finished 952th out of 1,529 teams by obtaining an area under the ROC curve value of 0.6239. This result is far from being optimal for the use case of anomaly detection. However, it is also significantly better than the random classifier benchmark of 0.5. That being said, taking our inexperience with neural networks and unsupervised anomaly detection into account, one might argue, that an expert in the area or at least a more experienced team might achieve better results using the same algorithm, but in a more experienced design of experiments. Also, paying more attention to the noise contained in the dataset, along with smarter feature extraction might lead to further improvements. Conceptionally, however, we show, that the deep learning auto-encoder is applicable to real world unsupervised anomaly detection, although it is particularly tough to find the right hyper-parameters. \\
 For future work we propose applying the algorithm to an already cleaned dataset, with - if possible - already existing features. The fact that unsupervised anomaly detection becomes even harder in the presence of noisy data lets us reach this conclusion. In particular, we propose applying the deep learning auto-encoder to a dataset consisting of digital images, in order to be able to draw more conclusions in regards to its suitability for this domain, without spoiling the results with a poor choice of features or a lot of noise in the data.
 
 
