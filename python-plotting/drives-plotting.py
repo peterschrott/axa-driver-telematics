@@ -79,9 +79,9 @@ def plot_all_drives(path_to_data= '../../data/drivers',driverId=1):
 # plot_drives(driverId=1634)
 
 
-plot_drives(driverId=1635)#one particularly long drive
-plot_drives(driverId=1635, outliers=[160, 88])#, 134])
-plot_all_drives(driverId=3506)# yup
+# plot_drives(driverId=1635)#one particularly long drive
+plot_drives(driverId=1635, outliers=[160, 88], exclude_drives=[160, 88])
+# plot_all_drives(driverId=3506)# yup
 
 '''
 1635 160 0.0602028979
