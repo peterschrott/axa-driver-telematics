@@ -120,15 +120,15 @@ object OutlierDetection extends SparkContextSupport {
     // unsupervised: pick any non-constant column
     dlParams._response_column = Symbol(fieldNames(2))
     // the activation function (non-linearity) to be used the neurons in the hidden layers.
-    dlParams._activation = DeepLearningParameters.Activation.Tanh
+    dlParams._activation = DeepLearningParameters.Activation.MaxoutWithDropout
     // use the autoencoder, obviously
     dlParams._autoencoder = true
     // one hidden layer with 20 neurons
-    dlParams._hidden = Array(12)
+    dlParams._hidden = Array(10)
     // no dropping of constant colors
     dlParams._ignore_const_cols = false
     // number of passes over the training dataset to be carried out
-    dlParams._epochs = 3
+    dlParams._epochs = 100
     // do some regularisation
     dlParams._l1 = this.l1Norm
     dlParams._l2 = this.l2Norm
@@ -162,7 +162,6 @@ object OutlierDetection extends SparkContextSupport {
 
     drivesWErrRdd.saveAsTextFile(outputPath + "/wRawErrors/")
 
-    /*
     // min und max per driver
     val driversMinMaxError = drivesWErrRdd.groupBy(_.driverId)
       .flatMap(group => {
@@ -174,7 +173,7 @@ object OutlierDetection extends SparkContextSupport {
     })
 
 
-    val kaggleResultRdd = drivesWErrRdd.map(entry => (entry.driverId, entry))
+    val kaggleResult_lcl_Rdd= drivesWErrRdd.map(entry => (entry.driverId, entry))
       .leftOuterJoin(driversMinMaxError)
       .map(join => {
       val driveWReconErr = join._2._1
@@ -183,13 +182,13 @@ object OutlierDetection extends SparkContextSupport {
       val prob = 1 - (driveWReconErr.reconErr - minErrorDriver) / (maxErrorDriver - minErrorDriver)
 
       new KaggleResult(driveWReconErr.driverId, driveWReconErr.driveId, prob)
-    })*/
+    })
 
     /* global min und max */
     val globalMinError = drivesWErrRdd.map(_.reconErr).min()
     val globalMaxError = drivesWErrRdd.map(_.reconErr).max()
 
-    val kaggleResultRdd = drivesWErrRdd.map(driver => {
+    val kaggleResult_glbl_Rdd = drivesWErrRdd.map(driver => {
       val prob = 1 - (driver.reconErr - globalMinError) / (globalMaxError - globalMinError)
       new KaggleResult(driver.driverId, driver.driveId, prob)
     })
@@ -198,7 +197,8 @@ object OutlierDetection extends SparkContextSupport {
     // write the output file
     //
     println("\n====> Write the predictions to the output file. \n")
-    kaggleResultRdd.saveAsTextFile(outputPath + "/kaggleResult")
+    kaggleResult_glbl_Rdd.saveAsTextFile(outputPath + "/kaggleResult_glbl")
+    kaggleResult_lcl_Rdd.saveAsTextFile(outputPath + "/kaggleResult_lcl")
 
     // Stop Spark cluster and destroy all executors
     if (System.getProperty("spark.ext.h2o.preserve.executors") == null) {
@@ -342,7 +342,7 @@ object OutlierDetection2 extends SparkContextSupport {
       // do some regularisation
       dlParams._l1 = this.l1Norm
       dlParams._l2 = this.l2Norm
-      dlParams._loss = DeepLearningParameters.Loss.CrossEntropy
+      dlParams._loss = DeepLearningParameters.Loss.MeanSquare
 
 
       /* build the deep learning model for the auto encoder */
@@ -378,19 +378,28 @@ object OutlierDetection2 extends SparkContextSupport {
 
     drivesWErrRdd.saveAsTextFile(outputPath + "/wRawErrors/")
 
-    /*
     // min und max per driver
     val driversMinMaxError = drivesWErrRdd.groupBy(_.driverId)
       .flatMap(group => {
-      val driverId = group._1
-      val minError = group._2.map(_.reconErr).min
-      val maxError = group._2.map(_.reconErr).max
+        val driverId = group._1
+        val minError = group._2.map(_.reconErr).min
+        val maxError = group._2.map(_.reconErr).max
 
-      Seq((driverId, (minError, maxError)))
+        Seq((driverId, (minError, maxError)))
+      })
+
+    val biggestReconError = drivesWErrRdd.groupBy(_.driverId).flatMap(group => {
+      val driverId = group._1
+      val sortedList = group._2.toList.sortBy(- _.reconErr)
+      val first = sortedList(0)
+      val second = sortedList(1)
+
+      Seq((driverId, first.driveId), (driverId, second.driveId))
     })
 
+    biggestReconError.saveAsTextFile(outputPath + "/biggestReconError/")
 
-    val kaggleResultRdd = drivesWErrRdd.map(entry => (entry.driverId, entry))
+    val kaggleResult_1_Rdd = drivesWErrRdd.map(entry => (entry.driverId, entry))
       .leftOuterJoin(driversMinMaxError)
       .map(join => {
       val driveWReconErr = join._2._1
@@ -399,13 +408,13 @@ object OutlierDetection2 extends SparkContextSupport {
       val prob = 1 - (driveWReconErr.reconErr - minErrorDriver) / (maxErrorDriver - minErrorDriver)
 
       new KaggleResult(driveWReconErr.driverId, driveWReconErr.driveId, prob)
-    })*/
+    })
 
     /* global min und max */
     val globalMinError = drivesWErrRdd.map(_.reconErr).min()
     val globalMaxError = drivesWErrRdd.map(_.reconErr).max()
 
-    val kaggleResultRdd = drivesWErrRdd.map(driver => {
+    val kaggleResult_2_Rdd = drivesWErrRdd.map(driver => {
       val prob = 1 - (driver.reconErr - globalMinError) / (globalMaxError - globalMinError)
       new KaggleResult(driver.driverId, driver.driveId, prob)
     })
@@ -414,7 +423,8 @@ object OutlierDetection2 extends SparkContextSupport {
     // write the output file
     //
     println("\n====> Write the predictions to the output file. \n")
-    kaggleResultRdd.saveAsTextFile(outputPath + "/kaggleResult")
+    kaggleResult_1_Rdd.saveAsTextFile(outputPath + "/kaggleResult_lclEval")
+    kaggleResult_2_Rdd.saveAsTextFile(outputPath + "/kaggleResult_glblEval")
 
     // Stop Spark cluster and destroy all executors
     if (System.getProperty("spark.ext.h2o.preserve.executors") == null) {
