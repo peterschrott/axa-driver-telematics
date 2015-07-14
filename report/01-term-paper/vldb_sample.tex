@@ -408,7 +408,7 @@ driver\_trip, & prob\\
 
 \subsection{Kaggle Results}
 
-As stated in section \ref{subsec:eval-result} uploaded predications are evaluated on Kaggle.com. 
+As stated in Section \ref{subsec:eval-result}, we upload the predictions obtained from our implementation to Kaggle.com, where they are being evaluated. 
 
 %Driven by our motivation and the results of applying H2O's deep learner on the MNIST dataset of handwritten digits manual investigation are to be done.
 
@@ -422,11 +422,11 @@ As stated in section \ref{subsec:eval-result} uploaded predications are evaluate
 \label{fig:kaggle-result1}
 \end{figure}
 
-The score on Kaggle.com for experiment 1 was quite low. We achieved a ROC score of 0.53014 as it can be seen in Figure \ref{fig:kaggle-result1}. This score is only slightly better than randomly guessing or labeling every trip with the highest probability. The experiment also showed, that result is invariant towards changes in normalisation, activation function, loss function as well as the methodology of building the deep learning auto-encoder model. Also the different approaches for computation of the probability does not significantly change the score.
+The score on Kaggle.com for experiment 1 was quite low. We achieved a ROC score of 0.53014 as can be seen in Figure \ref{fig:kaggle-result1}. This score is only slightly better than randomly guessing or labeling every trip with the highest probability. What this experiment also showed is, that the result is invariant towards changes in normalization, activation function, loss function as well as the methodology of building the deep learning auto-encoder model. Also, the different approaches for computation of the probability does not significantly change the score.
 
 Explanations for this result are among others:
 \begin{itemize}
-\item Too hight degree of generalization of the model
+\item Too high degree of generalization of the model
 \item Wide variances between individual drivers
 \item Lack of cross-validation for optimizing the hyper-pa\-ra\-me\-ter
 \end{itemize}
@@ -441,11 +441,11 @@ Explanations for this result are among others:
 \label{fig:kaggle-result2}
 \end{figure}
 
-Driven by the sobering low results of experiment 1 and the change of model fitting strategy increased the score on Kaggle.com by almost 20\%. As shown in Figure \ref{fig:kaggle-result2} the score reached 61.897\% of a prediction accuracy. This result confirms the assumption made for experiment 2. We claimed a less general fitting approach will result in a better detection of anomalies. As the result shows the variance among the drivers is overcome and the individual outliers are found more reliable.
+Driven by the sobering low results of experiment 1 and the resulting change of model fitting strategy increased the score on Kaggle.com by almost 20\%. As shown in Figure \ref{fig:kaggle-result2} the score reached 61.897\% of a prediction accuracy. This result confirms the assumption drawn in experiment 2. We claimed a less general fitting approach will result in a better detection of anomalies. As the result shows, the variance among the drivers is overcome and the individual outliers are found more reliably.
 
 The mid-range quality of this result can be explained by the following reasons:
 \begin{itemize}
-\item Anomalies can influence the fitting of the model
+\item Noisy data can influence the fitting of the model
 \item Lack of cross-validation for optimizing the hyper-pa\-ra\-me\-ter
 \end{itemize}
 
@@ -459,7 +459,7 @@ The mid-range quality of this result can be explained by the following reasons:
 \label{fig:kaggle-result3}
 \end{figure}
  
-Experiment 3 for a more stable model towards \textit{learning what's normal} resulted in a higher score on Kaggle.com again. Removing the two trips with the highest reconstruction error improves the prediction result as it can be seen on the rating of an area under ROC curve value of 0.6239. The result is shown in figure \ref{fig:kaggle-result3}. 
+Experiment 3 for a more stable model towards \textit{learning what's normal} once again resulted in an improvement of accuracy, thus yielding a higher score on Kaggle.com. Removing the two trips with the highest reconstruction error improves the prediction result as can be seen on the rating of an area under the ROC curve value of 0.6239. The result is shown in figure \ref{fig:kaggle-result3}. 
 
 \subsection{Qualitative Evaluation}
 \label{subsec:Quali-eval}
