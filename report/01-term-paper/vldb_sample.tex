@@ -329,7 +329,7 @@ The idea of experiment 3 lays in the result of the initial two experiments (see 
 \begin{figure}
 \centering
 \includegraphics[trim=0cm 9cm 7.4cm 0cm, clip=true, width=0.8\linewidth]{"pics/approach2"}
-\caption{Schematic visualization of experiment(s)}
+\caption{Schematic visualization of experiments}
 \label{fig:approach-2}
 \end{figure}
 
@@ -412,7 +412,7 @@ As stated in section \ref{subsec:eval-result} uploaded predications are evaluate
 
 %Driven by our motivation and the results of applying H2O's deep learner on the MNIST dataset of handwritten digits manual investigation are to be done.
 
-\subsubsection*{Result Experiment 1}
+\subsubsection*{Result of Experiment 1}
 \label{ssubsec:Res-e1}
 
 \begin{figure}
@@ -424,14 +424,14 @@ As stated in section \ref{subsec:eval-result} uploaded predications are evaluate
 
 The score on Kaggle.com for experiment 1 was quite low. We achieved a ROC score of 0.53014 as it can be seen in Figure \ref{fig:kaggle-result1}. This score is only slightly better than randomly guessing or labeling every trip with the highest probability. The experiment also showed, that result is invariant towards changes in normalisation, activation function, loss function as well as the methodology of building the deep learning auto-encoder model. Also the different approaches for computation of the probability does not significantly change the score.
 
-Explanations for this result are among others :
+Explanations for this result are among others:
 \begin{itemize}
 \item Too hight degree of generalization of the model
 \item Wide variances between individual drivers
 \item Lack of cross-validation for optimizing the hyper-pa\-ra\-me\-ter
 \end{itemize}
 
-\subsubsection*{Experiment 2}
+\subsubsection*{Result of Experiment 2}
 \label{ssubsec:Res-e2}
 
 \begin{figure}
@@ -443,7 +443,13 @@ Explanations for this result are among others :
 
 Driven by the sobering low results of experiment 1 and the change of model fitting strategy increased the score on Kaggle.com by almost 20\%. As shown in Figure \ref{fig:kaggle-result2} the score reached 61.897\% of a prediction accuracy. This result confirms the assumption made for experiment 2. We claimed a less general fitting approach will result in a better detection of anomalies. As the result shows the variance among the drivers is overcome and the individual outliers are found more reliable.
 
-\subsubsection*{Result Experiment 3}
+The mid-range quality of this result can be explained by the following reasons:
+\begin{itemize}
+\item Anomalies can influence the fitting of the model
+\item Lack of cross-validation for optimizing the hyper-pa\-ra\-me\-ter
+\end{itemize}
+
+\subsubsection*{Result of Experiment 3}
 \label{ssubsec:Res-e3}
 
 \begin{figure}
@@ -453,6 +459,7 @@ Driven by the sobering low results of experiment 1 and the change of model fitti
 \label{fig:kaggle-result3}
 \end{figure}
  
+Experiment 3 for a more stable model towards \textit{learning what's normal} resulted in a higher score on Kaggle.com again. Removing the two trips with the highest reconstruction error improves the prediction result as it can be seen on the rating of an area under ROC curve value of 0.6239. The result is shown in figure \ref{fig:kaggle-result3}. 
 
 \subsection{Qualitative Evaluation}
 \label{subsec:Quali-eval}
