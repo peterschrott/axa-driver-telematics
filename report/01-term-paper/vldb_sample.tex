@@ -12,13 +12,9 @@
 
 % ****************** TITLE ****************************************
 
-%Format\titlenote{for use with vldb.cls}}
 \title{Unsupervised Anomaly Detection using \ttlit{H2O.ai}}
+\subtitle{AIM-3 - Scalable Data Analysis and Data Mining}
 
-
-% possible, but not really needed or used for PVLDB:
-%\subtitle{[Extended Abstract]
-%\titlenote{A full version of this paper is available as\textit{Author's Guide to Preparing ACM SIG Proceedings Using \LaTeX$2_\epsilon$\ and BibTeX} at \texttt{www.acm.org/eaddress.htm}}}
 
 % ****************** AUTHORS **************************************
 
@@ -30,12 +26,12 @@
 % 1st. author
 \alignauthor
 Peter Schrott\\
-       \affaddr{AIM-3 - Scalable Data Analysis and Data Mining \\ Berlin Institute of Technology}\\
+       \affaddr{Berlin Institute of Technology}\\
        \email{peter.schrott@campus.tu-berlin.de}
 % 2nd. author
 \alignauthor
 Julian Voelkel\\
-       \affaddr{AIM-3 - Scalable Data Analysis and Data Mining \\ Berlin Institute of Technology}\\
+       \affaddr{Berlin Institute of Technology}\\
        \email{voelkel@campus.tu-berlin.de}  
 }
 
@@ -69,6 +65,7 @@ In this work, we investigate the performance of a specific algorithm from the fa
 	%(Conclusion based on experiments and results of the experiments, structure of dataset, feature extraction)
 %8. References
 
+%-------------------- INTRODUCTION ---------------------------------------------------------
 
 \section{Introduction}
 \label{sec:Introduction}
@@ -147,6 +144,8 @@ These steps can be outlined as follows:
 	\item Draw conclusions about the general suitability of the algorithm based on the results produced by the application of its implementation compared to those of other algorithms
 \end{enumerate}
 
+
+%-------------------- METHODOLOGY ---------------------------------------------------------
 
 \section{Methodology}
 Within the scope of this project, we use H2O.ai's (see section \ref{subsec:Metho-h2o}) implementation of the deep learning auto-encoder model through its Sparkling Water API on top of Apache Spark. The dataset we use in order to be able to compare our results to those of our peers using different algorithms is the AXA Driver Telematics Analysis dataset (see \ref{subsec:Metho-dataset}), which contains multiple trips by multiple drivers.
@@ -297,6 +296,8 @@ The box plot in Figure \ref{fig:box-plot-distance} for instance shows not only t
 Considering the number of stops per driver and their respective driving trip is also helpful in detecting driving patterns. In Figure \ref{fig:number-of-breaks-10-120}, size and color of the circle visualize the number of stops between 10 seconds and 120 seconds. The insights we gain from this plot can be the revealing of the area the respective driver commonly drives in. A constant high number of short breaks might indicate a driver mainly driving in urban areas. In this case, trips with more infrequent, shorter stops could be considered anomalous because the might originate from a rural driver.
 
 
+%-------------------- EXPERIMENTS ---------------------------------------------------------
+
 \section{Experiments}
 \label{sec:Experiments}
 
@@ -380,6 +381,8 @@ In the final step the H2OFrame is transformed back into the Spark RDD representa
 After normalizing, the Spark API is used to print the output to a text file. The resulting text file is in the Kaggle format, consisting of 547200 rows containing the probabilities for each driver and trip. In addition to the output for Kaggle a second file is created containing the raw reconstruction error instead of the probability.
 
 
+%-------------------- RESULTS ---------------------------------------------------------
+
 \section{Results}
 \label{sec:Results}
 
@@ -408,8 +411,6 @@ driver\_trip, & prob\\
 \subsection{Kaggle Results}
 
 As stated in Section \ref{subsec:eval-result}, we upload the predictions obtained from our implementation to Kaggle.com, where they are being evaluated. 
-
-%Driven by our motivation and the results of applying H2O's deep learner on the MNIST dataset of handwritten digits manual investigation are to be done.
 
 \subsubsection*{Result of Experiment 1}
 \label{ssubsec:Res-e1}
@@ -476,8 +477,8 @@ The conclusions that can be drawn from the qualitative evaluation is, that the m
 \label{fig:d-3506}
 \end{figure}
 
-%------------------------------------------------------------
 
+%-------------------- CONCLUSION ---------------------------------------------------------
 
 \section{Conclusion}
 \label{sec:Conclusion}
@@ -485,6 +486,8 @@ The conclusions that can be drawn from the qualitative evaluation is, that the m
 The aim of our project was to provide evidence to the question as to whether the deep learning auto-encoder is suitable for anomaly detection in an unsupervised environment. Applying an existing parallel implementation of the algorithm from a software house with a particularly strong reputation - namely H2O.ai - should enable us to provide evidence to the answer to the before mentioned question to at least some extent. Since evaluating unsupervised learning algorithms is a particularly tough task, in particular if the dataset's size has to be big enough to be considered "Big Data", working on a dataset from Kaggle.com, should allow us to let their system take care of the model evaluation part. Additionally, the availability of scores from more than 1,500 other teams using other algorithms would allow us to compare the auto-encoder's performance directly to those of other algorithms.\\
 As we describe in Section \ref{sec:Results}, our third and last experiment would have finished 952th out of 1,529 teams by obtaining an area under the ROC curve value of 0.6239. This result is far from being optimal for the use case of anomaly detection. However, it is also significantly better than the random classifier benchmark of 0.5. That being said, taking our inexperience with neural networks and unsupervised anomaly detection into account, one might argue, that an expert in the area or at least a more experienced team might achieve better results using the same algorithm, but in a more experienced design of experiments. Also, paying more attention to the noise contained in the dataset, along with smarter feature extraction might lead to further improvements. Conceptionally, however, we show, that the deep learning auto-encoder is applicable to real world unsupervised anomaly detection, although it is particularly tough to find the right hyper-parameters. \\
 For future work we propose applying the algorithm to an already cleaned dataset, with - if possible - already existing features. The fact that unsupervised anomaly detection becomes even harder in the presence of noisy data lets us reach this conclusion. In particular, we propose applying the deep learning auto-encoder to a dataset consisting of digital images, in order to be able to draw more conclusions in regards to its suitability for this domain, without spoiling the results with a poor choice of features or a lot of noise in the data.
+
+\bibliography{vldb_sample}
 
 \newpage
 
@@ -521,36 +524,6 @@ For future work we propose applying the algorithm to an already cleaned dataset,
 \caption{Trips of driver 1635}
 \label{fig:d-1635}
 \end{figure}
-
-%relevance, importance, impact
-
-
-
-% bad resuls due to:
-%	- features not good for auto-encoder for some reason
-%	- structure of the dataset
-%	- hyper parameter choice
-%	- no cross-validation possible (unlabeled data)
-%	- model 
-%\section{References}
-%\label{sec:References}
-
-\bibliographystyle{abbrv}
-\bibliography{vldb_sample}  % vldb_sample.bib is the name of the Bibliography in this case
-% You must have a proper ".bib" file
-%  and remember to run:
-% latex bibtex latex latex
-% to resolve all references
-
-%\subsection{References}
-%Generated by bibtex from your ~.bib file.  Run latex,
-%then bibtex, then latex twice (to resolve references).
-
-%APPENDIX is optional.
-% ****************** APPENDIX **************************************
-% Example of an appendix; typically would start on a new page
-%pagebreak
-
 
 \end{document}
 
